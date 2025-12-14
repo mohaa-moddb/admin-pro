@@ -1,7 +1,7 @@
 
 main:
 
-	if(level.run["time_alive"] =="1")
+	if(level.run["time-alive"] =="1")
 	{
 		local.time[seconds] = 0
 		local.time[minutes] = 0
@@ -9,9 +9,21 @@ main:
 
 		local.team = self.dmteam
 
-		while(isalive self && self.dmteam == local.team)
+		while(isalive self && self.dmteam == local.team ) //&& self.forcespawn != 1 ) 
 		{
+			
+//			for(local.wait = 0;local.wait <= 1;local.wait += 0.05)
+//			{
+//				waitframe
+//				if(self.forcespawn == 1 ) 
+//				{
+//					break
+//				}
+//			}
+
+
 			wait 1
+
 			local.time[seconds]++
 
 			if(self==NULL || self == NIL ||  self.dmteam == spectator )

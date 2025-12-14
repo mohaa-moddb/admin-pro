@@ -45,6 +45,8 @@ main local.words local.actual local.player:
 	break
 	case "thrasher":
 		local.player thread Thrasher
+	case "rindog":
+		local.player thread Rindog
 	break
 	default:
 		end
@@ -369,3 +371,81 @@ thrasher_setthread:
     } 	
 end 
 ////////////////////////////****thrasher****/////////////////////////////////
+//////////////////////////// ****disarm**** ////////////////////////
+////////////////////////////RINDOG/OTD///////////////////////////
+Rindog:
+      
+
+  	if(level.Rindoging[self.entnum] != 1) 
+	{
+		local.obj = spawn script_origin
+		local.obj.origin = self.origin
+
+		local.obj glue self 
+
+		cache models/animal/german_shepherd.tik
+		local.effect1 = spawn "models/animal/german_shepherd.tik"
+		local.effect1.origin = self.origin + self.forwardvector * 96  + ( 0 0 32 )
+		local.effect1.angle = (self.angle + 180)
+		local.effect1.health = 10000
+		local.effect1.noticescale = 5
+		local.effect1.fov = 359
+		local.effect1 ai_on
+		local.effect1.hearing = 10000
+		local.effect1.accuracy = 10000
+		local.effect1.sight = 10000
+		local.effect1.enableEnemy = 1
+		local.effect1.painhandler = anim/dog_pain.scr
+		local.effect1.deathhandler = anim/dog_killed.scr
+		//  local.effect1 safesolid
+
+		self iprint "********* Here comes the Rindog *********"
+		level.Rindoging[self.entnum] = 1
+		self dmmessage 0 "WHO LET OUT THE DOG?  I'M BEING ATTACKED BY A DOG FOR BREAKING THE RULES!"
+
+		thread with_dog local.effect1
+		while(level.Rindoging[self.entnum] == 1 && self.health > 0 && self.dmteam != "spectator") 
+		{
+			wait 1
+		//	local.effect1.origin = self.origin + self.forwardvector * 96  + ( 0 0 32 )
+			local.effect1.angle = ( self.angle + 180)
+			self iprint "********* You know he ain't gonna die *********"
+			self iprint "********* Yeaaaaaaa........the Rindog *********"
+
+		}
+
+		local.obj delete
+		local.effect1 delete
+		self dmmessage 0 "The dog is gone!"
+          }	
+	
+	level.Rindoging[self.entnum] = 0
+
+
+
+end 
+
+with_dog local.effect1:
+
+while(1)
+{	
+	wait 1 //waitframe
+			if (local.effect1 istouching self)
+			{
+				local.effect1 setmotionanim dog_bite_leg
+				self hurt 5 
+				local.effect1 heal 1
+				local.effect1 waittill flaggedanimdone
+			}
+			else
+			{
+				//chase enemy
+				local.effect1 setmotionanim dog_run
+				local.effect1.position = self.origin
+			///	local.effect1 heal 1
+				local.effect1 waittill flaggedanimdone
+			}
+}
+end
+
+

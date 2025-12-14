@@ -1,4 +1,10 @@
 
+
+// 11 September 2005 added 3 new functions
+// array_to_int
+// array_to_str
+// array_to_float
+
 /*
 Array_to_lower
 Array_to_upper
@@ -13,6 +19,9 @@ split_line
 Replace
 Remove
 Format_replace
+array_to_int
+array_to_str
+array_to_float
 */
 
 
@@ -256,7 +265,7 @@ end local.right
 // usage: waitexec global/strings.scr::Right (NUMBER OF CHARACTERS LEFT, STRING STRING )
 // Returns a string left from the number given as position
 // eg
-// local.string = waitexec global/strings.scr::Left 3 "hello" "left"
+// local.string = waitexec global/strings.scr::Left 3 "hello" 
 // local.string will be 'hell'
 // 
 Left local.pos local.string:
@@ -403,8 +412,8 @@ end local.string
 
 // Used to split a line of words into a array of words. return with word count
 // localinfo == line to split
-// local.say = say to admins input detected or not, set 1 usualu
-// local.spacer = WHat to use to split the line. If none is set then " " will be used.
+// local.say = say to admins input detected or not, set 1 usualy
+// local.spacer = What to use to split the line. If none is set then " " will be used.
 // usage local.wordarray = waitexec global/strings.scr::split_line ( STRING STRING , CONSOLE FEEDBACK, STRING SPACER)
 //
 //eg
@@ -708,3 +717,67 @@ Combine local.words local.start:
 	}
 
 end local.actual
+
+// array_to_int
+// converts a array into interger
+// returns the array as int
+
+array_to_int local.array:
+
+	if(local.array[0] != NIL)
+	{
+		local.start = 0
+	}
+	else
+	{
+		local.start = 1
+	}
+
+	for(local.i = local.start;local.i <= local.array.size; local.i++)
+	{
+		 local.array[local.i] = int local.array[local.i]
+	}
+
+end local.array
+
+// array_to_str
+// converts a array into string
+// returns the array as string
+array_to_str local.array:
+
+	if(local.array[0] != NIL)
+	{
+		local.start = 0
+	}
+	else
+	{
+		local.start = 1
+	}
+
+	for(local.i = local.start;local.i <= local.array.size; local.i++)
+	{
+		 local.array[local.i] = string local.array[local.i]
+	}
+
+end local.array
+
+// array_to_float
+// converts a array into float
+// returns the array as float
+array_to_float local.array:
+
+	if(local.array[0] != NIL)
+	{
+		local.start = 0
+	}
+	else
+	{
+		local.start = 1
+	}
+
+	for(local.i = local.start;local.i <= local.array.size; local.i++)
+	{
+		 local.array[local.i] = float local.array[local.i]
+	}
+
+end local.array

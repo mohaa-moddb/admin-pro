@@ -12,6 +12,7 @@ main local.script local.info local.info2 local.player: // script type to exec. i
 // 2 - player
 // 3 = one with extra
 
+
 	if(game.command_scripts != 1)	//if not loaded, load the script files
 	{
 		waitexec  game.file["settings/advanced"]::console_scripts
@@ -21,16 +22,20 @@ main local.script local.info local.info2 local.player: // script type to exec. i
 	{
 	case 1:
 		local.scripts = game.one_word_scripts 
+		local.info = waitexec global/strings.scr::to_lower local.info
 	break
 	case 2:
 		local.scripts = game.player_scripts
+		local.info[2] = waitexec global/strings.scr::to_lower local.info[2]
 	break
 	case 3:
 		local.scripts = game.commands_with_extra_scripts
+		local.info[1] = waitexec global/strings.scr::to_lower local.info[1]
 	break
 	default:
 		exec global/ac/console_feedback.scr "command_post/cosnole.scr being exec wrong. Please fix."
 	}
+
 
 	for(local.i = 1; local.i <= local.scripts.size; local.i++)
 	{

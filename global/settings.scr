@@ -2,228 +2,308 @@ main:
 
 	if(level.camper_setup!=1)															// if setup is not yet done
 	{
-		
+//		level waittill spawn
+//		wait 1
+		exec settings/Advanced_universal.txt::extra_settings	// Find out reset setting
 
-		exec global/ac/spawn_detect.scr::setup
+		level.camper_setup=1	
 
-		level.camper_setup=1															// set the setup to 1 telling the script its done and dont run this section again
+		waitthread get_mapstr			//get map name and map string name
+		//waitthread get_mapspecific		// get map specific information
 
-		if(game.setup== "" || game.setup == "1" || game.commands == NIL)									// if there are no settings or reset has been set reload the settings
-		{ 
-			local.mods = waitexec settings/Mods.txt::commands									// get the command scripts from the mods.txt
+		level.gametype = int(getcvar "g_gametype")
 
-			if(local.mods==NIL)														// if the returned value is nothing then their is somethign wrong so end.
+		game.scripts = waitexec settings/Mods.txt 
+
+		local.APscripts = getcvar "AP_scripts"
+
+		if(local.APscripts != "" && local.APscripts != "NIL")
+		{
+			if(game.reset == 0 || game.reset == 2)
 			{
-				exec global/ac/console_feedback.scr "Mods.txt is broken or missing- Please fix"	1					// message the admins with what is wrong.
-				exec global/ac/console_feedback.scr "Terminating mod" 1									// tell them the script will end.
-				end															//now end the script
-			}
-			else																// if all is good so far try and collect the settings. we hope
-			{
-				local.a = 1	
-				for(local.i = 1;  local.i <= local.mods.size ; local.i++)								// run through all the scripts
+				for(local.i=0;local.i <= game.scripts.size - 1;local.i++)
 				{
-					if( local.mods[local.i][3] == "1")										// if the mod is to be run // THIS FUCKING LINE MADE ME SPEND 2 HOURS DEBUGGING :@ "/ / " instead of "//" :@
-					{
+					game.scripts[local.i + 1][2] = local.APscripts[local.i] 
+				}	
+			}
+		}
 
-						if(local.mods[local.i][4] == "1")									// if map specific
-						{
-							if(level.end_map == NIL)									// if no map is loaded. load a map string. removeing the /
-							{
-								waitthread get_mapstr 									// get that map string!
-							}
-			
-							local.thread = ( local.mods[local.i][1] + "_" + level.end_map + ".txt")				// settings file is what is written in mods.txt and the map _string.txt
-					
-							// load plane map str setting
-							if(local.mods[local.i][2] == "none" || local.mods[local.i][2] == "")				// If its just the file with no extra thread exec it.
-							{
-								local.cmds[local.a] = waitexec local.thread						// get the commands fro the settings file.
-								
-								if(local.cmds[local.a] == NIL)									//if they return NIL> The path is wrong or file is corrupt. Tell admin. Try again
-								{
-									exec global/ac/console_feedback.scr ("Error loading " + local.thread )		// ja, u know its just to inform user
-									exec global/ac/console_feedback.scr ("loading " + local.mods[local.i][1] )	// same as above duhh
-										
-									local.thread = ( local.mods[local.i][1] + ".txt" )				// ok, SO the map str path file thing is wrong so load normal settings filee without map extension
-									local.cmds[local.a] = waitexec local.thread					// try getting settings once again
-												
-									if(local.cmds[local.a] == NIL)							// If its NIL, Thne ur in trouble will probably end up flooding server. I flood it anyway with error messages.hehe
-									{
-										exec global/ac/console_feedback.scr ("Error loading " + local.thread ) 1	// i think we all know what this line does
-									}
-									else										// if its good then go to next script
-									{
-										local.a++								// sets next number for script
-									}
-								}
-								else
-								{
-									local.a++									// next script number
-								}
-							}
-							else
-							{	
-								// load map specific setting with a thread
-								local.scthread = local.mods[local.i][2]					
-								local.cmds[local.a] = waitexec local.thread::local.scthread
-			
-								if(local.cmds[local.a] == NIL)
-								{
-									exec global/ac/console_feedback.scr ("Error loading " + local.thread + "::" + local.scthread  )
-									exec global/ac/console_feedback.scr ("loading " + local.mods[local.i][1] )
-										
-									local.thread = ( local.mods[local.i][1] + ".txt" )
-									local.cmds[local.a] = waitexec local.thread::local.scthread
-						
-									if(local.cmds[local.a] == NIL)
-									{
-										exec global/ac/console_feedback.scr ("Error loading " + local.thread ) 1
-									}
-									else
-									{
-										local.a++
-									}
-								}
-								else
-								{
-									local.a++
-								}	
-							}
-						}
-						else
-						{
-							// no map specific just normal path 
-							local.thread = ( local.mods[local.i][1] +  ".txt")
-				
-							if(local.mods[local.i][2] == "none")
-							{
-								local.cmds[local.a] = waitexec local.thread
+		if(game.scripts == NIL)
+		{
+			exec global/ac/console_feedback.scr ("settings/Mods.txt is missing or broken. Please Fix" ) 1				// message the admins with what is wrong.
+			exec global/ac/console_feedback.scr ("Shutting DOwn Admin-Pro" ) 1				// message the admins with what is wrong.
+			end
+		}
+
+		//first sort out spawning
+		exec settings/Advanced_universal.txt::spawn_scripts				//Setup Spawn scripts first
+		game.spawn_scripts = level.spawn_scripts
+
+		// Sort what mods should run and should not run
+		for(local.i = 1;local.i <= game.scripts.size ;local.i++)
+		{
+			// have to use waitthread because mohaa updates it's memory too damn slow and then the spawn scripts are wrong oh oh , yeah damn mohaa
+			waitthread on_or_off game.scripts[local.i] local.i
+		}
+
+		// Clear spawn scripts that should not run
+		thread clear_spawn_scripts
 	
-								if(local.cmds[local.a] == NIL)
-								{
-									exec global/ac/console_feedback.scr ("Error loading " + local.thread ) 1
-								}
-								else
-								{
-									local.a++
-								}
-							}
-							else
-							{
-								// no map specific just normal path with thread
-								local.scthread = local.mods[local.i][2]
-								local.cmds[local.a]  = waitexec local.thread::local.scthread
-					
-								if(local.cmds[local.a] == NIL)
-								{
-									exec global/ac/console_feedback.scr ("Error loading " + local.thread + "::" + local.scthread ) 1
-								}
-								else
-								{
-									local.a++
-								}
-							}
-						
-						}
+		if(game.reset == 1 || game.all_commands == NIL)									// if there are no settings or reset has been set reload the settings
+		{ 	
+			level.cmd_position = 1
+			//Work out the settings and exec the scripts
+			for(local.i = 1;local.i <= game.scripts.size ;local.i++)
+			{
+				waitthread getsettings game.scripts[local.i]
+			}
+			
+			// Now get the extra mods
+			local.mods = waitexec settings/Mods.txt::extra_settings
+			
+			for(local.i = 1;local.i <= local.mods.size ;local.i++)
+			{
+				waitthread getextrasettings local.mods[local.i]
+			}
+	
+			//thread update_allcmds level.cmds	//Update all the commands gained from the settings files
+			waitthread update_allcmds level.cmds
+		}
 
-						game.file[local.mods[local.i][1]] = local.thread		// give the file path 	
-					}
-				}
+		//Do advanced.txt
+		thread advanced
+		//setup fixes straight away
+		waitthread getgame
+		
+		//Finaly exec all th scripts
+		for(local.i = 1;local.i <= game.scripts.size ;local.i++)
+		{
+			if(game.scripts[local.i][4] != "none")
+			{
+				exec game.scripts[local.i][4]
+			}
+		}
+
+		// Now if needed update the AP_Scripts cvar to keep track of the scripts
+
+		if(local.APscripts == "" || local.APscripts == "NIL")
+		{
+			local.APscripts = ""
+			for(local.i=1;local.i <= game.scripts.size;local.i++)
+			{
+				local.APscripts += game.scripts[local.i][2] 
 			}
 
-			exec game.file["settings/advanced"]::extra_settings
-			game.campersettings =  waitexec game.file["settings/advanced"]::cvars
-			waitthread register game.campersettings
-
-			waitthread getgame	//	get the game.game
-
-			game.types = waitexec game.file["settings/camper"]::types
-			game.scripts = waitexec settings/Mods.txt
-
-			game.setup = waitthread getcmd "reset"
-			waitthread update_allcmds local.cmds
-
-			level.camps[allies] = 0
-			level.camps[axis] = 0
+			setcvar "AP_scripts" local.APscripts 
 		}
-
-		local.gametype = getcvar "g_gametype"
-	
-		for(local.i=1;local.i <= game.scripts.size;local.i++)
-		{
-			local.jente = game.scripts[local.i][1]
-			level.run[local.jente] = waitthread getcmd local.jente
-			local.run = 0
-
-			if(level.run[local.jente]=="1")
-			{
-				local.gtthread =  game.scripts[local.i][6]
-				
-				if(local.gtthread == "all" || local.gtthread == "All")
-				{
-					local.run = 1
-				}
-				else
-				{
-					local.isgametypeallowed  =  waitexec game.scripts[local.i][6][1]:: game.scripts[local.i][6][2]
-					for(local.n=1;local.n<=local.isgametypeallowed.size;local.n++)
-					{
-						if(local.isgametypeallowed[local.n][1] == local.gametype)
-						{
-							local.run = 1
-						}
-					}
-				}
-
-				if(local.run==1)
-				{
-					local.run = 0
-					//get the maps list
-					local.mapget = waitexec game.file["settings/camper"]::maplist
-					local.mapget = waitexec global/strings.scr::Array_to_lower local.mapget
 		
-					for(local.t=1;local.t<=local.mapget.size;local.t++)
-					{
-						if(local.mapget[local.t][1]== getcvar("mapname"))
-						{
-							local.run = 1
-						}
-					}
-						
-				}
-				else
-				{
-					level.run[local.jente] = "0"
-				}
+		//clear this as it wont be used again
+		level.cmds = NIL
 
-				if(local.run==1)
-				{
-					local.thread = game.scripts[local.i][4]
-					exec local.thread
-				}
-			}	
-		}
-
-		exec global/ac/cvarscheck.scr
-	
-		if(game.game== NIL)
-		{
-			waitthread getgame
-		}
-
-		local.map = getcvar("mapname")
-		game.informed=1 //camper mod is on to start with so game.informed is 1
-				//cache sounds
-		local.master = spawn ScriptMaster
-					// aliascache (?alias?) snd wavfile soundparms basevol volmod basepitch pitchmod minDist maxDist channel loaded|streamed maps "mapstr1 mapstring2 mapstring3 ..."
-		local.master aliascache streamed_dfr_scripted_M3L1_016a sound/dialogue/m3l1/A/dfr_scripted_M3L1_016a.wav soundparms 1.5 0.0 1.0 0.0 200 1500 dialog streamed subtitle "You stay in one spot, you're a dead man!" maps local.map
-		local.master aliascache camper_bombtick sound/items/Item_Timer_01.wav soundparms 0.7 0.0 1.0 0.0 200 500 local loaded maps local.map
-		local.master aliascache camper_final_countdown sound/items/final_countdown.wav soundparms 1.5 0.0 1.0 0.0 200 500 local loaded maps local.map
-
+		game.campersettings =  waitexec game.file["settings/advanced"]::cvars
+		waitthread register game.campersettings
 		
-
+		if(level.run["camper"] == "1")
+		{
+			game.types = waitexec game.file["camper"]::types
+		}
+		
 	}
+end
+
+
+//****************************************************************************************************************
+// Get the settings for the files with no mod related to them that can be turned on and off
+//
+//****************************************************************************************************************
+
+getextrasettings local.mod:
+
+	if(local.mod[2] != "0")
+	{
+		if(local.mod[3] != "0")
+		{
+			local.path = ( local.mod[1] + level.map_specific)
+		}
+		else
+		{
+			local.path = ( local.mod[1] + ".txt")
+		}
+		
+		level.cmds[level.cmd_position] =  waitexec local.path
+
+		//check its there
+		if(level.cmds[level.cmd_position] == NIL)
+		{
+			exec global/ac/console_feedback.scr ("Could not find " + local.path )					// message the admins with what is wrong.
+			local.path = ( local.mod[1] + ".txt")
+			exec global/ac/console_feedback.scr ("Loading " + local.path )	
+			// reload normal path
+			level.cmds[level.cmd_position] =  waitexec local.path
+		}
+
+		level.cmd_position++
+
+		game.file[local.mod[1]] = local.path
+//		waitthread add_cmds level.cmds
+	}
+end
+
+//********************************************************
+// Get the settings for the mods
+//
+//********************************************************
+
+getsettings local.mod:
+
+	if(local.mod[7] != "none" && local.mod[2] == "1")
+	{
+		if(local.mod[8] != "0")
+		{
+			local.path = ( local.mod[7] + level.map_specific )
+		}
+		else
+		{
+			local.path = ( local.mod[7] + ".txt")
+		}
+		
+		level.cmds[level.cmd_position] =  waitexec local.path
+
+		//check its there
+		if(level.cmds[level.cmd_position] == NIL)
+		{
+			exec global/ac/console_feedback.scr ("Could not find " + local.path )					// message the admins with what is wrong.
+			local.path = ( local.mod[7] + ".txt")
+			exec global/ac/console_feedback.scr ("Loading " + local.path )	
+			// reload normal path
+			level.cmds[level.cmd_position] =  waitexec local.path
+		}
+
+		level.cmd_position++
+
+		game.file[local.mod[1]] = local.path
+//		waitthread add_cmds level.cmds
+	}
+end
+
+//********************************************************
+// Work out if this mod should be on or off
+//
+//********************************************************
+
+on_or_off local.mod local.gamenum:
+
+	local.modname = local.mod[1]	//what mod is it?
+
+	if(local.mod[2] == "1")	//is the mod initialy ON
+	{
+		local.end = 0
+		// Now check the mod can run in this game type.
+
+		if(local.mod[6] != "all")	//does it run in all or has it got a specified game type list?
+		{
+			local.has_list = waitexec local.mod[6]	//get the list
+			local.end = waitthread check_gametypelist local.has_list	//check the game type list
+		}
+
+		// If mod is not to end then check for map in a map array
+		if(local.end == 0)
+		{
+		
+			if(local.mod[5] != "all")
+			{
+				local.has_list = waitexec local.mod[5] //get the list
+				local.end = waitthread check_maplist local.has_list	//check the map array
+			}
+
+
+			// Mod is to run!
+			if(local.end == 0)
+			{
+				game.scripts[local.gamenum][2] = "1"
+				level.run[local.modname] = "1"		//Set level.run cvar to run mod
+	
+				println ("AP Running " + local.modname)
+				end
+			}
+		}
+	}
+
+	game.scripts[local.gamenum][2] = "0"
+	level.run[local.modname] = "0"
+	println ("AP Not Running " + local.modname)
+end
+	
+//********************************************************
+// Check this mod can run on this game type
+//
+//********************************************************
+
+check_gametypelist local.list:
+
+	for(local.i = 1; local.i <= local.list.size ; local.i++)
+	{
+		local.gametype  = int local.list[local.i][1]
+		if(local.gametype == level.gametype)
+		{
+			// gametype found
+			end 0
+		}
+	}
+	// game type not found in list
+end 1
+
+//********************************************************
+// Check this mod can run on this map
+//
+//********************************************************
+
+check_maplist local.list:
+
+	local.list = waitexec global/strings.scr::Array_to_lower local.list
+
+	for(local.i = 1; local.i <= local.list.size ; local.i++)
+	{
+		if(local.list[local.i][1] == level.mapname)
+		{
+			//map found
+			end 0
+		}
+	}
+	// Map not found. Dont run
+end 1
+
+//********************************************************
+// get the map specific information
+//
+//********************************************************
+
+//get_mapspecific:
+//
+//	local.map_specific =  waitexec settings/map_specific.txt //load info
+//
+//	for( local.i = 0;local.i <= local.map_specific.size; local.i++)
+//	{
+//		group.map_specific[local.map_specific[1][1]] = local.map_specific[1][2]		
+//	}
+//
+//end
+
+
+//********************************************************
+// Advanced.txt sort out thread
+//
+//********************************************************
+
+advanced:
+
+	local.path = game.file["settings/advanced"]
+	exec local.path::extra_settings				// Setup Extra variables
+	exec local.path::extra_scripts				// Run Extra scripts
+	exec local.path::console_scripts				// Setup Console and punishment script variables
+
+	local.campersettings = waitexec local.path::cvars		// Get cvars and register them as cvars
+	thread register local.campersettings					// Create the cvars
 end
 
 
@@ -248,15 +328,17 @@ end
 add_cmds local.cmds:
 
 	local.n = game.all_commands.size
+
+	if(local.n == -1)
+	{
+		local.n = 0
+	}
 	for(local.i=1;local.i <= local.cmds.size;local.i++)
 	{
+		local.n++
 		for(local.t=1;local.t <= local.cmds[local.i].size; local.t++ )
 		{
-			local.n++
-			for(local.s=1;local.s <= local.cmds[local.i][local.t].size; local.s++ )
-			{
-				game.all_commands[local.n][local.s] = local.cmds[local.i][local.t][local.s]
-			}
+			game.all_commands[local.n][local.t] = local.cmds[local.i][local.t]
 		}
 	}
 end
@@ -292,30 +374,23 @@ getgame:
 		}
 	}
 
-
 	switch(local.game[local.i])
 	{
 	case "A":
 		setcvar "g_statefile" local.state
-		local.campersettings =  waitexec game.file["settings/camper"]::weaponsaa
 		game.game = "AA"
-		end local.campersettings
 	break 
 	case "S":
 		setcvar "g_statefile" local.state
 		game.game = "SH"
-		local.campersettings =  waitexec game.file["settings/camper"]::weaponssh
-		end local.campersettings		
 	break
 	case "B":
 		setcvar "g_statefile" local.state
 		game.game = "BT"
-		local.campersettings =  waitexec game.file["settings/camper"]::weaponsbt
-		end local.campersettings
 	break
 	}
 
-end local.cmdwant 
+end
 
 
 //get a command, thread with cmd and param, will return the info
@@ -334,7 +409,9 @@ getcmd local.cmdwant local.index:
 		if(local.cmdask == local.cmdwant)
 		{
 			local.answer = game.all_commands[local.i] [local.index]
+					//iprintlnbold local.answer
 			end local.answer
+
 		}
 	}
 
@@ -367,16 +444,112 @@ end
 
 get_mapstr:
 
-	local.map = getcvar("mapname")
-	//remove the /
-
-	level.end_map = ""
-
-	for(local.i=0;local.i<=local.map.size - 1;local.i++)
+	level.mapname = getcvar "mapname"
+	level.map_specific = level.mapname
+	local.pos = waitexec global/strings.scr::InStr "/" level.map_specific
+	
+	if(local.pos != NIL) //single player map
 	{
-		if(local.map[local.i] != "/")	
+		local.pos = level.map_specific.size - local.pos
+		level.map_specific = waitexec global/strings.scr::Right local.pos level.map_specific
+	}
+	
+	level.map_shortname = level.map_specific
+	level.map_specific = ("_" + level.map_specific + ".txt" )
+
+end
+
+	
+clear_spawn_scripts:
+	
+	//level.spawn_scripts
+
+	local.scripts = NIL
+	local.t = 0
+	for(local.i= 1 ;local.i <= game.spawn_scripts.size ; local.i++ )
+	{
+	//	iprintlnbold ( level.spawn_scripts[local.i][2] + " " + level.run[level.spawn_scripts[local.i][2] ])
+
+		if(level.run[game.spawn_scripts[local.i][2] ] == "1" || game.spawn_scripts[local.i][2] == "none")
 		{
-			level.end_map = level.end_map + local.map[local.i]
+			local.t++
+			local.scripts[local.t][1] = level.spawn_scripts[local.i][1]
+			local.scripts[local.t][2] = level.spawn_scripts[local.i][2]
+			local.scripts[local.t][3] = level.spawn_scripts[local.i][3]	
 		}
 	}
+
+	level.spawn_scripts = NIL
+	level.spawn_scripts = local.scripts
+
 end
+
+clear_spawn_scripts_with:
+	
+	//level.spawn_scripts
+
+	local.scripts = NIL
+	local.t = 0
+	local.changed = 0
+	for(local.i= 1 ;local.i <= game.spawn_scripts.size ; local.i++ )
+	{
+	//	iprintlnbold ( level.spawn_scripts[local.i][2] + " " + level.run[level.spawn_scripts[local.i][2] ])
+
+		if(level.run[game.spawn_scripts[local.i][2] ] == "1" || game.spawn_scripts[local.i][2] == "none")
+		{
+			local.changed =1
+			local.t++
+			local.scripts[local.t][1] = game.spawn_scripts[local.i][1]
+			local.scripts[local.t][2] = game.spawn_scripts[local.i][2]
+			local.scripts[local.t][3] = game.spawn_scripts[local.i][3]	
+		}
+	}
+
+	if(local.changed == 1)
+	{
+		level.spawn_scripts = NIL
+		level.spawn_scripts = local.scripts
+	}
+
+end
+
+
+
+//********************************************************
+// Loads settings for mods turned on in console
+//
+//********************************************************
+
+Loadsettings local.mod:
+
+	if(local.mod[7] != "none" && local.mod[2] == "1")
+	{
+		exec global/ac/console_feedback.scr ( ">Loading  settings for " + local.mod[1] )
+
+		if(local.mod[8] != "0")
+		{
+			local.path = ( local.mod[7] + level.map_specific )
+		}
+		else
+		{
+			local.path = ( local.mod[7] + ".txt")
+		}
+		
+		local.cmds =  waitexec local.path
+
+		//check its there
+		if(local.cmds == NIL)
+		{
+			exec global/ac/console_feedback.scr ("Could not find " + local.path )					// message the admins with what is wrong.
+			local.path = ( local.mod[7] + ".txt")
+			exec global/ac/console_feedback.scr ("Loading " + local.path )	
+			// reload normal path
+			local.cmds =  waitexec local.path
+		}
+
+
+		game.file[local.mod[1]] = local.path
+		waitthread add_cmds local.cmds
+	}
+end
+

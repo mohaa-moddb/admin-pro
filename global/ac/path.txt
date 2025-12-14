@@ -1,1 +1,0 @@
-globalacserver_messages.scr

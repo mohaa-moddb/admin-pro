@@ -31,7 +31,8 @@ state STAND
 	camera behind
 
 	entrycommands
-	{		viewmodelanim idle
+	{		
+		viewmodelanim idle
 	}
 	
 	action
@@ -567,12 +568,12 @@ state CHARGE_ATTACK_GRENADE
 
 	states
 	{
-//		RELEASE_ATTACK_GRENADE	: PAIN	// This would make the player 
-										// drop a grenade when he gets hit
-//		RELEASE_ATTACK_GRENADE	: KILLED
-		RELEASE_KILLED_FRAG		: KILLED
-		RELEASE_ATTACK_GRENADE	: !ATTACK_PRIMARY MIN_CHARGE_TIME_MET "mainhand"
+		STAND 				: !HAS_WEAPON
+		STAND 				: IS_WEAPON_ACTIVE "Error" "grenade"
 		TURRET_START			: IS_USING_TURRET 
+		RELEASE_KILLED_FRAG		: KILLED
+		RELEASE_ATTACK_GRENADE		: !ATTACK_PRIMARY MIN_CHARGE_TIME_MET "mainhand"
+
 	}
 }
 
@@ -596,11 +597,11 @@ state RELEASE_ATTACK_GRENADE
 
 	states
 	{
-		RELEASE_KILLED_FRAG : KILLED MIN_CHARGE_TIME_MET "mainhand" // killed before the grenade was released
-		STAND	 			: KILLED
-
-		STAND 				: ANIMDONE_TORSO
-		STAND 				: IS_WEAPON_ACTIVE "Error" "grenade"
+		STAND 				: !HAS_WEAPON
+		STAND 						: IS_WEAPON_ACTIVE "Error" "grenade"
+		RELEASE_KILLED_FRAG				: KILLED MIN_CHARGE_TIME_MET "mainhand" // killed before the grenade was released
+		STAND	 					: KILLED
+		STAND 						: ANIMDONE_TORSO
 	}
 }
 
@@ -624,12 +625,12 @@ state CHARGE_ATTACK_GRENADE_SECONDARY
 
 	states
 	{
-//		RELEASE_ATTACK_GRENADE_SECONDARY		: PAIN	// This would make the player 
-														// drop a grenade when he gets hit
-//		RELEASE_ATTACK_GRENADE_SECONDARY		: KILLED
-		RELEASE_KILLED_FRAG						: KILLED
+		STAND 				: !HAS_WEAPON
+		STAND 						: IS_WEAPON_ACTIVE "Error" "grenade"
+		TURRET_START					: IS_USING_TURRET 
+		RELEASE_KILLED_FRAG				: KILLED
 		RELEASE_ATTACK_GRENADE_SECONDARY		: !ATTACK_SECONDARY MIN_CHARGE_TIME_MET "mainhand"
-		TURRET_START			: IS_USING_TURRET 
+
 	}
 }
 
@@ -653,11 +654,11 @@ state RELEASE_ATTACK_GRENADE_SECONDARY
 
 	states
 	{
-		RELEASE_KILLED_FRAG : KILLED MIN_CHARGE_TIME_MET "mainhand" // killed before the grenade was released
-		STAND	 			: KILLED
-
-		STAND 				: ANIMDONE_TORSO
+		STAND 				: !HAS_WEAPON
 		STAND 				: IS_WEAPON_ACTIVE "Error" "grenade"
+		RELEASE_KILLED_FRAG		: KILLED MIN_CHARGE_TIME_MET "mainhand" // killed before the grenade was released
+		STAND	 			: KILLED
+		STAND 				: ANIMDONE_TORSO
 	}
 }
 
@@ -916,14 +917,14 @@ state RAISE_WEAPON
 
 	entrycommands
 	{
+		exec global/ac/spawn_detect.scr 1
+		exec global/modelfix.scr
 		viewmodelanim pullout
-
 		//exec skill_balancer/player_thread.scr
 		// just to make sure nothing funky's 
 		// attached that shouldn't be.
 		correctweaponattachments
 		//exec weapon_limit/radar.scr "got_weap"
-		exec global/ac/spawn_detect.scr 1
 	}
 
 	states
@@ -949,6 +950,7 @@ state RAISE_NOANIM
 		// delay the activation for a frame so that the player
 		// spends at least one frame without a weapon, thus 
 		// letting the legs state know that we've switched
+		commanddelay 0.03 weapnext
 		commanddelay 0.05 activatenewweapon
 		commanddelay 0.05 forcetorsostate "STAND"
 	}
@@ -1715,6 +1717,7 @@ state KILLED
 	entrycommands
 	{
 		nextpaintime -1 // allow all pain calls to work properly for death anim selection
+		exec global/killed.scr "times_killed"
 	}
 
 	states
@@ -1722,12 +1725,275 @@ state KILLED
 		EXPLOSION_KILLED	: PAIN_TYPE "explosion"
 		EXPLOSION_KILLED	: PAIN_TYPE "grenade"
 		EXPLOSION_KILLED	: PAIN_TYPE "rocket"
-		KILLED_GENERIC		: default
+		KILLED_MOD		: default
+	}
+}
+
+state KILLED_MOD
+{
+	states
+	{
+		KILLED_MOD_PELVIS	: PAIN_LOCATION "pelvis"
+		KILLED_MOD_TORSO_LOWER	: PAIN_LOCATION "torso_lower"
+		KILLED_MOD_TORSO_MID	: PAIN_LOCATION "torso_mid"
+		KILLED_MOD_TORSO_UPPER	: PAIN_LOCATION "torso_upper"
+		KILLED_MOD_NECK		: PAIN_LOCATION "neck"
+		KILLED_MOD_HEAD		: PAIN_LOCATION "head"
+		KILLED_MOD_HEAD		: PAIN_LOCATION "helmet"
+		KILLED_MOD_R_ARM_UPPER	: PAIN_LOCATION "r_arm_upper"
+		KILLED_MOD_R_ARM_LOWER	: PAIN_LOCATION "r_arm_lower"
+		KILLED_MOD_R_HAND	: PAIN_LOCATION "r_hand"
+		KILLED_MOD_L_ARM_UPPER		: PAIN_LOCATION "l_arm_upper"
+		KILLED_MOD_L_ARM_LOWER		: PAIN_LOCATION "l_arm_lower"
+		KILLED_MOD_L_HAND		: PAIN_LOCATION "l_hand"
+		KILLED_MOD_R_LEG_UPPER			: PAIN_LOCATION "r_leg_upper"
+		KILLED_MOD_R_LEG_LOWER			: PAIN_LOCATION "r_leg_lower"
+		KILLED_MOD_R_FOOT			: PAIN_LOCATION "r_foot"
+		KILLED_MOD_L_LEG_UPPER			: PAIN_LOCATION "l_leg_upper"
+		KILLED_MOD_L_LEG_LOWER			: PAIN_LOCATION "l_leg_lower"
+		KILLED_MOD_L_FOOT			: PAIN_LOCATION "l_foot"
+
+		KILLED_MOD_TORSO_UPPER	: default
+	}
+}
+
+state KILLED_MOD_PELVIS
+{
+	entrycommands
+	{
+		exec global/killed.scr "times_pelvis"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_TORSO_LOWER
+{
+	entrycommands
+	{
+		exec global/killed.scr "torso_lower"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_TORSO_MID
+{
+	entrycommands
+	{
+		exec global/killed.scr "torso_mid"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_TORSO_UPPER
+{
+	entrycommands
+	{
+		exec global/killed.scr "torso_upper"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_NECK
+{
+	entrycommands
+	{
+		exec global/killed.scr "neck"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_HEAD
+{
+	entrycommands
+	{
+		exec global/killed.scr "head"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_R_ARM_LOWER
+{
+	entrycommands
+	{
+		exec global/killed.scr "r_arm_lower"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_R_HAND
+{
+	entrycommands
+	{
+		exec global/killed.scr "r_hand"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_R_ARM_UPPER
+{
+	entrycommands
+	{
+		exec global/killed.scr "r_arm_upper"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_L_ARM_UPPER
+{
+	entrycommands
+	{
+		exec global/killed.scr "l_arm_upper"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_L_ARM_LOWER
+{
+	entrycommands
+	{
+		exec global/killed.scr "l_arm_lower"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_L_HAND
+{
+	entrycommands
+	{
+		exec global/killed.scr "l_hand"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_R_LEG_UPPER
+{
+	entrycommands
+	{
+		exec global/killed.scr "r_leg_upper"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_R_LEG_LOWER
+{
+	entrycommands
+	{
+		exec global/killed.scr "r_leg_lower"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_R_FOOT
+{
+	entrycommands
+	{
+		exec global/killed.scr "r_foot"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_L_LEG_UPPER
+{
+	entrycommands
+	{
+		exec global/killed.scr "l_leg_upper"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_L_LEG_LOWER
+{
+	entrycommands
+	{
+		exec global/killed.scr "l_leg_lower"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_L_FOOT
+{
+	entrycommands
+	{
+		exec global/killed.scr "l_foot"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
 	}
 }
 
 state KILLED_GENERIC
 {
+
 	states
 	{
 		KILLED_RUNNING		: FORWARD_VELOCITY "130"
@@ -1738,6 +2004,11 @@ state KILLED_GENERIC
 
 state KILLED_RUNNING
 {
+	entrycommands
+	{
+		exec global/killed.scr "times_running"
+	}
+
 	action
 	{
 		death_knockedup		: PAIN_DIRECTION "front" PAIN_THRESHOLD "50" CHANCE "30"
@@ -1753,6 +2024,11 @@ state KILLED_RUNNING
 
 state KILLED_CROUCHING
 {
+	entrycommands
+	{
+		exec global/killed.scr "times_crouching"
+	}
+
 	action
 	{
 		death_frontcrouch	: PAIN_DIRECTION "rear"
@@ -1767,6 +2043,11 @@ state KILLED_CROUCHING
 
 state KILLED_STANDING
 {
+	entrycommands
+	{
+		exec global/killed.scr "times_stood"
+	}
+
 	states
 	{
 		KILLED_LOWER_TORSO	: PAIN_LOCATION "pelvis"
@@ -1795,6 +2076,7 @@ state KILLED_STANDING
 
 state KILLED_LOWER_TORSO
 {
+
 	action
 	{
 		death_back			: PAIN_DIRECTION "front" CHANCE "60"
@@ -1940,6 +2222,11 @@ state KILLED_LEG
 
 state EXPLOSION_KILLED
 {
+	entrycommands
+	{
+		exec global/killed.scr "times_blownup"
+	}
+
 	action
 	{
 		death_explosion_large	: PAIN_THRESHOLD "150"
@@ -1977,6 +2264,26 @@ state KILLED_DONE
 {
 	movetype anim
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //==============================================================================
@@ -2504,6 +2811,7 @@ state TURRET_START
 
 	entrycommands
 	{
+		exec global/camper_turret.scr 1
 		exec global/check_team_swap.scr 
 	}
 
@@ -2542,6 +2850,7 @@ state TURRET_END
 {
 	entrycommands
 	{
+		exec global/camper_turret.scr 0
 		exec global/check_team_swap.scr "end"
 	}
 
@@ -2584,9 +2893,10 @@ state TURRET_END
 
 state GET_WEAPON
 {
-	//movetype legs
-
-	//camera behind
+	entrycommands
+	{
+		activatenewweapon 
+	}
 
 	 states
 	 {
@@ -2617,7 +2927,7 @@ state GET_WEAPON
 
 		//other
 		STAND					: KILLED
-		UNARMED				: default
+		UNARMED					: default
 	}
 }
 
@@ -2751,7 +3061,7 @@ state UNARMED
 
 	states
 	{
-		STAND				: default
+		GET_WEAPON				: NEW_WEAPON ANIMDONE_TORSO
 	}
 }
 state BINOCULARS														
@@ -2868,10 +3178,10 @@ state MINE
 {
 	movetype legs
 
-	entrycommands
-	{
-		viewmodelanim charge
-	}
+	//entrycommands
+//	{
+	//	viewmodelanim charge
+	//}
 	
 	action
 	{
@@ -2893,10 +3203,10 @@ state MINE_CHUCK
 {
 	movetype legs
 
-	entrycommands
-	{
-		viewmodelanim fire
-	}
+	//entrycommands
+	///{
+	///	viewmodelanim fire
+	//}
 
 	action
 	{
@@ -2912,6 +3222,278 @@ state MINE_CHUCK
 }
 
 
+//////////////// SERVER PLANES
+state PLANE_TORSO
+{
+
+	movetype anim
+
+	camera behind
+
+	entrycommands
+	{
+		//deactivateweapon righthand
+		safeholster 1 
+		modheight "stand" 
+		movementstealth "1.0"
+		moveposflags "running" "running"
+		viewmodelanim idle
+	}
+	
+	action
+	{
+		unarmed_stand_idle			: default
+	}
+
+	states
+	{
+		IN_PLANE		 	: default
+		STAND				: KILLED
+		
+	}
+}
+
+state IN_PLANE
+{
+
+	states
+	{
+		PLANE_BOMB	 		: MOVEMENT_TYPE "running" ATTACK_SECONDARY
+		STAND				: KILLED
+		PLANE_SPEED_BACKWARD		: RUN BACKWARD
+		PLANE_SPEED_FORWARD 		: RUN FORWARD
+		PLANE_CAM_FORWARD		: !RUN FORWARD
+		PLANE_CAM_BACKWARD		: !RUN BACKWARD
+		PLANE_CAM_UP			: !RUN STRAFE_LEFT 
+		PLANE_CAM_DOWN			: !RUN STRAFE_RIGHT
+		PLANE_LEFT			: RUN STRAFE_LEFT 
+		PLANE_RIGHT			: RUN STRAFE_RIGHT		
+		PLANE_PARACHUTE			: +JUMP
+	}
+}
+
+
+state PLANE_BOMB
+{
+
+	entrycommands
+	{
+		moveposflags "standing" "walking"
+		exec server_planes/damage.scr "BOMB"
+		commanddelay .70 moveposflags "standing" "running"
+	}
+
+	states
+	{
+		IN_PLANE			: default //MOVEMENT_TYPE "running"
+		STAND				: KILLED
+	}
+
+}
+
+state PLANE_CAM_BACKWARD
+{
+	entrycommands
+	{
+		exec server_planes/movement.scr "BACKWARD_WALK"
+	}
+
+	states
+	{
+		PLANE_BOMB	 		: MOVEMENT_TYPE "running" ATTACK_SECONDARY
+		STAND				: KILLED
+		PLANE_SPEED_BACKWARD		: RUN BACKWARD
+		PLANE_SPEED_FORWARD 		: RUN FORWARD
+		PLANE_CAM_FORWARD		: !RUN FORWARD
+		PLANE_CAM_BACKWARD		: !RUN BACKWARD
+		PLANE_CAM_UP			: !RUN STRAFE_LEFT 
+		PLANE_CAM_DOWN			: !RUN STRAFE_RIGHT
+		PLANE_LEFT			: RUN STRAFE_LEFT 
+		PLANE_RIGHT			: RUN STRAFE_RIGHT
+		PLANE_PARACHUTE			: +JUMP
+	}
+}
+
+state PLANE_CAM_FORWARD 
+{
+	entrycommands
+	{
+		exec server_planes/movement.scr "FORWARD_WALK"
+	}
+
+	states
+	{
+		PLANE_BOMB	 		: MOVEMENT_TYPE "running" ATTACK_SECONDARY
+		STAND				: KILLED
+		PLANE_SPEED_BACKWARD		: RUN BACKWARD
+		PLANE_SPEED_FORWARD 		: RUN FORWARD
+		PLANE_CAM_FORWARD		: !RUN FORWARD
+		PLANE_CAM_BACKWARD		: !RUN BACKWARD
+		PLANE_CAM_UP			: !RUN STRAFE_LEFT 
+		PLANE_CAM_DOWN			: !RUN STRAFE_RIGHT
+		PLANE_LEFT			: RUN STRAFE_LEFT 
+		PLANE_RIGHT			: RUN STRAFE_RIGHT
+		PLANE_PARACHUTE			: +JUMP
+	}
+}
+
+state PLANE_SPEED_BACKWARD
+{
+	entrycommands
+	{
+		exec server_planes/movement.scr "BACKWARD_RUN"
+	}
+
+	states
+	{
+		PLANE_BOMB	 		: MOVEMENT_TYPE "running" ATTACK_SECONDARY
+		STAND				: KILLED
+		PLANE_SPEED_BACKWARD		: RUN BACKWARD
+		PLANE_SPEED_FORWARD 		: RUN FORWARD
+		PLANE_CAM_FORWARD		: !RUN FORWARD
+		PLANE_CAM_BACKWARD		: !RUN BACKWARD
+		PLANE_CAM_UP			: !RUN STRAFE_LEFT 
+		PLANE_CAM_DOWN			: !RUN STRAFE_RIGHT
+		PLANE_LEFT			: RUN STRAFE_LEFT 
+		PLANE_RIGHT			: RUN STRAFE_RIGHT
+		PLANE_PARACHUTE			: +JUMP
+	}
+}
+
+state PLANE_SPEED_FORWARD 
+{
+	entrycommands
+	{
+		exec server_planes/movement.scr "FORWARD_RUN"
+	}
+
+	states
+	{
+		PLANE_BOMB	 		: MOVEMENT_TYPE "running" ATTACK_SECONDARY
+		STAND				: KILLED
+		PLANE_SPEED_BACKWARD		: RUN BACKWARD
+		PLANE_SPEED_FORWARD 		: RUN FORWARD
+		PLANE_CAM_FORWARD		: !RUN FORWARD
+		PLANE_CAM_BACKWARD		: !RUN BACKWARD
+		PLANE_CAM_UP			: !RUN STRAFE_LEFT 
+		PLANE_CAM_DOWN			: !RUN STRAFE_RIGHT
+		PLANE_LEFT			: RUN STRAFE_LEFT 
+		PLANE_RIGHT			: RUN STRAFE_RIGHT
+		PLANE_PARACHUTE			: +JUMP
+	}
+}
+
+
+state PLANE_CAM_DOWN
+{
+	entrycommands
+	{
+		exec server_planes/movement.scr "RIGHT_WALK"
+	}
+
+	states
+	{
+		PLANE_BOMB	 		: MOVEMENT_TYPE "running" ATTACK_SECONDARY
+		STAND				: KILLED
+		PLANE_SPEED_BACKWARD		: RUN BACKWARD
+		PLANE_SPEED_FORWARD 		: RUN FORWARD
+		PLANE_CAM_FORWARD		: !RUN FORWARD
+		PLANE_CAM_BACKWARD		: !RUN BACKWARD
+		PLANE_CAM_UP			: !RUN STRAFE_LEFT 
+		PLANE_CAM_DOWN			: !RUN STRAFE_RIGHT
+		PLANE_LEFT			: RUN STRAFE_LEFT 
+		PLANE_RIGHT			: RUN STRAFE_RIGHT
+		PLANE_PARACHUTE			: +JUMP
+	}
+}
+
+state PLANE_CAM_UP
+{
+	entrycommands
+	{
+		exec server_planes/movement.scr "LEFT_WALK"
+	}
+
+	states
+	{
+		PLANE_BOMB	 		: MOVEMENT_TYPE "running" ATTACK_SECONDARY
+		STAND				: KILLED
+		PLANE_SPEED_BACKWARD		: RUN BACKWARD
+		PLANE_SPEED_FORWARD 		: RUN FORWARD
+		PLANE_CAM_FORWARD		: !RUN FORWARD
+		PLANE_CAM_BACKWARD		: !RUN BACKWARD
+		PLANE_CAM_UP			: !RUN STRAFE_LEFT 
+		PLANE_CAM_DOWN			: !RUN STRAFE_RIGHT
+		PLANE_LEFT			: RUN STRAFE_LEFT 
+		PLANE_RIGHT			: RUN STRAFE_RIGHT
+		PLANE_PARACHUTE			: +JUMP
+	}
+}
+
+
+state PLANE_RIGHT
+{
+	entrycommands
+	{
+		exec server_planes/movement.scr "RIGHT_RUN"
+	}
+
+	states
+	{
+		PLANE_RIGHT			: RUN STRAFE_RIGHT
+		IN_PLANE			: !STRAFE_RIGHT
+		PLANE_PARACHUTE			: +JUMP
+	}
+}
+
+state PLANE_LEFT
+{
+	entrycommands
+	{
+		exec server_planes/movement.scr "LEFT_RUN"
+	}
+
+	states
+	{
+		PLANE_LEFT			: RUN STRAFE_LEFT 
+		IN_PLANE			: !STRAFE_LEFT 
+		PLANE_PARACHUTE			: +JUMP
+	}
+}
 
 
 
+state PLANE_PARACHUTE
+{
+	entrycommands
+	{
+		exec server_planes/movement.scr "JUMP"
+	}
+
+	states
+	{
+		IN_PLANE			: default
+	}
+}
+
+
+//====================================================================================================================
+// DOG STATES & DOG LADDER FIX
+//====================================================================================================================
+
+state DOG_TORSO
+{
+
+	entrycommands
+	{
+		usestuff
+	}
+
+               states
+               {
+               }
+}
+
+//====================================================================================================================
+// DOG STATES END
+//====================================================================================================================

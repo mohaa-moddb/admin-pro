@@ -1,0 +1,23 @@
+// 23/11/2005 19:11 Fixed typo in disconnect will now kick players correctly.
+//
+// 23/11/2005 19:08 addded cvar_restart to protect other servers
+
+//  Fix for Fps exploit
+main:
+	//self noclip
+	//self physics_off
+	local.in = waitexec global/strings.scr::InStr "fps" self.model 
+
+	if(local.in != NIL)
+	{
+	     	self noclip
+		self physics_off
+	//	iprintlnbold self.model
+		self stufftext "say I am trying to crash the server"
+		wait 1
+		//self stufftext "cvar_restart"
+		wait 1
+		self stufftext "disconnect"
+		
+	}
+end

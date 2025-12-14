@@ -9,7 +9,7 @@ main:
 
 	if(game.plane_instructions == NIL || game.plane_instructions == NULL)
 	{
-		game.plane_instructions = waitexec game.file["settings/flyable_planes"]::instructions
+		game.plane_instructions = waitexec game.file["settings/flyable-planes"]::instructions
 	}
 	
 	for(local.i = 1; local.i <= game.plane_instructions.size; local.i++)

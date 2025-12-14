@@ -69,7 +69,7 @@ checkhit local.place:
 	for(local.i = 1; local.i <= $player.size; local.i++)
 	{
 		local.player= $player[local.i]	
-		if(local.player!=self)
+		if(local.player!=self && local.player != NIL)
 		{
 			local.end_or_not = waitthread team_check local.player self
 
@@ -147,7 +147,7 @@ team_check local.player local.shooter:
 	
 	local.ff =  getcvar "g_teamdamage"
 
-	if(local.ff!="0")
+	if(local.ff=="0")
 	{
 		if(local.player.dmteam == local.shooter.dmteam)
 		{
@@ -429,14 +429,14 @@ end
 explode local.explosionplace:
 
 	thread bang local.explosionplace
-	local.radius = 300.00 * 300.00
+	local.radius = 200.00 * 200.00
 
 	for(local.i = 1; local.i <= $player.size; local.i++)
 	{
 		local.player= $player[local.i]
-		local.distance = local.player.origin - local.explosionplace
+		local.distance =  (local.player.origin - local.explosionplace) * (local.player.origin - local.explosionplace)
 
-		local.distance = local.distance * local.distance
+		//local.distance = local.distance * local.distance
 
 		if(local.distance <= local.radius)
 		{

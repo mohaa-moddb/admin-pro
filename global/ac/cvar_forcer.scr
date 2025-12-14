@@ -2,16 +2,17 @@
 
 main:
 
-	if(level.run["cvar_forcing"]!="1"){end}
+	if(level.run["cvar-forcing"]!="1"){end}
 		
-	local.cvars = waitexec settings/cvar_force.txt::cvar_force
+	
+	local.cvars = waitexec game.file["cvar-forcing"]::cvar_force
 
 	if!(local.cvars.size)
 	{
 		end
 	}
 
-	while(level.run["cvar_forcing"] =="1")
+	while(level.run["cvar-forcing"] =="1")
 	{
 		wait 1
 		for(local.i= 1; local.i <= $player.size; local.i ++)
@@ -21,7 +22,7 @@ main:
 			{
 				wait 1
 				$player[local.i] stufftext (local.cvars[local.c][1] + " " + local.cvars[local.c][2])
-				if(level.run["cvar_forcing"]!="1"){end}
+				if(level.run["cvar-forcing"]!="1"){end}
 			}
 		}
 	}

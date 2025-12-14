@@ -1,3 +1,5 @@
+// 08/12/2005 16:43 Forced player to use pistol before he/she starts to use a plane, this fixed sniper
+
 main local.origin local.team local.scale local.start_pos:
 
 	if(level.planes == NIL)
@@ -141,7 +143,7 @@ end
 fly:
 	local.player = parm.other
 	
-	if(local.player.flying!=1 ||  local.player.OWNS == 1)
+	if(local.player.flying != 1 &&  local.player.OWNS != 1)
 	{
 		local.team = parm.other.dmteam
 
@@ -161,16 +163,17 @@ fly:
 				end
 			}
 		}
+		self nottriggerable
 
+		local.player useweaponclass pistol
+		wait 1
 		local.player.plane_start = self.start_pos	
 		local.player scale self.plane_scale 
 		local.player exec server_planes/server_fly.scr
-		local.player.flying=1
 
 		local.trigdelay = waitexec global/settings.scr::getcmd "trig-delay"
 		local.trigdelay = int local.trigdelay
 
-		self nottriggerable
 		local.trig = waitthread find_trig self.team self
 		local.trig hide
 

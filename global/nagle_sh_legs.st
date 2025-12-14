@@ -1113,7 +1113,6 @@ state LAND
 		modheight "stand"
 		movementstealth "0.5"
 		moveposflags "standing"
-		exec server_planes/parachute.scr
 	}
 	states
 	{
@@ -1199,6 +1198,7 @@ state FALL_DUCKED
 {
 	entrycommands
 	{
+		exec jetpack/jetpack.scr
 		modheight "duck"
 		movementstealth "0.75"
 		moveposflags "offground" "falling"
@@ -1238,6 +1238,7 @@ state FALL_DUCKED_WANT_STAND
 {
 	entrycommands
 	{
+		exec jetpack/jetpack.scr
 //		modheight "duck"
 		movementstealth "0.75"
 		moveposflags "offground" "falling"
@@ -1488,3 +1489,751 @@ state TURRET_USING
 		STAND : !IS_USING_TURRET
 	}
 }
+
+
+//====================================================================================================================
+// DOG STATES & DOG MG42 FIX
+//====================================================================================================================
+
+state IN_DOG
+{
+	entrycommands
+	{
+	  modheight "stand"
+	  movementstealth "1.0"
+	  moveposflags "standing"
+          exec global/SMART_HOUNDS.scr "DEFAULT"
+          exec global/DOG_NOTUSINGTURRET.scr
+	}
+
+	legs
+	{
+	  unarmed_stand_idle		: default
+	}
+
+	states
+	{
+                DOG_TURRET_START		: IS_USING_TURRET !HAS_WEAPON
+
+	  DOG_FALL			: FALLING
+		
+	  DOG_CROUCH			: ONGROUND +CROUCH !DUCKED_VIEW_IN_WATER
+	  DOG_CROUCH_DENIED		: ONGROUND +CROUCH DUCKED_VIEW_IN_WATER
+
+	  DOG_FORWARD			: RUN FORWARD HAS_VELOCITY !BLOCKED "2"
+	  DOG_BACKWARD	        	              : RUN BACKWARD HAS_VELOCITY !BLOCKED "2"
+	  DOG_LEFT			: RUN STRAFE_LEFT HAS_VELOCITY !BLOCKED "2"
+	  DOG_BACKWARD	        	              : RUN STRAFE_RIGHT HAS_VELOCITY !BLOCKED "2"
+
+	  DOG_WALK_FORWARD		: FORWARD HAS_VELOCITY !BLOCKED "2"
+	  DOG_WALK_BACKWARD		: BACKWARD HAS_VELOCITY !BLOCKED "2"
+	  DOG_WALK_LEFT			: STRAFE_LEFT HAS_VELOCITY !BLOCKED "2"
+	  DOG_WALK_BACKWARD		: STRAFE_RIGHT HAS_VELOCITY !BLOCKED "2"
+
+	  IN_DOG				: +HAS_WEAPON
+	  IN_DOG				: -HAS_WEAPON
+		
+	  DOG_JUMP_STANDING		: +JUMP ONGROUND !DUCKED_VIEW_IN_WATER
+	}
+}
+state DOG_FORWARD
+{
+	entrycommands
+	{
+	  movementstealth "0.25"
+	  moveposflags "standing" "running"
+          exec global/SMART_HOUNDS.scr "FORWARD"
+	}
+
+	legs
+	{
+	  unarmed_stand_run_fwd		              : default
+	}
+
+	states
+	{
+	  DOG_FALL			: FALLING
+
+	  DOG_CROUCH			: ONGROUND +CROUCH !DUCKED_VIEW_IN_WATER
+	  DOG_CROUCH_DENIED		: ONGROUND +CROUCH DUCKED_VIEW_IN_WATER
+		
+	  IN_DOG				: !HAS_VELOCITY
+	  IN_DOG				: BLOCKED "2"
+		
+	  DOG_WALK_FORWARD		: !RUN FORWARD
+	  DOG_WALK_BACKWARD		: !RUN BACKWARD
+	  DOG_WALK_LEFT			: !RUN STRAFE_LEFT !FORWARD !BACKWARD
+	  DOG_WALK_BACKWARD		: !RUN STRAFE_RIGHT !FORWARD !BACKWARD
+ 
+	  DOG_BACKWARD		              : BACKWARD
+	  DOG_LEFT			: STRAFE_LEFT !FORWARD !BACKWARD
+	  DOG_RIGHT			: STRAFE_RIGHT !FORWARD !BACKWARD
+		
+	  DOG_FORWARD	                            : +HAS_WEAPON
+	  DOG_FORWARD	                            : -HAS_WEAPON
+
+                DOG_JUMP_STANDING		: +JUMP ONGROUND !DUCKED_VIEW_IN_WATER
+	}
+}
+
+
+state DOG_BACKWARD
+{
+	entrycommands
+	{
+	  movementstealth "0.25"
+	  moveposflags "standing" "running"
+          exec global/SMART_HOUNDS.scr "BACK"
+	}
+
+	legs
+	{
+	  unarmed_stand_run_back			: default
+	}
+
+	states
+	{
+	  DOG_FALL				: FALLING
+
+	  DOG_CROUCH			: ONGROUND +CROUCH !DUCKED_VIEW_IN_WATER
+	  DOG_CROUCH_DENIED		: ONGROUND +CROUCH DUCKED_VIEW_IN_WATER
+
+	  IN_DOG				: !HAS_VELOCITY
+	  IN_DOG				: BLOCKED "2"
+
+	  DOG_WALK_FORWARD		: !RUN FORWARD
+	  DOG_WALK_BACKWARD		: !RUN BACKWARD
+	  DOG_WALK_LEFT			: !RUN STRAFE_LEFT !FORWARD !BACKWARD
+	  DOG_WALK_BACKWARD		: !RUN STRAFE_RIGHT !FORWARD !BACKWARD
+
+	  DOG_FORWARD			: FORWARD
+	  DOG_LEFT			: STRAFE_LEFT !FORWARD !BACKWARD
+	  DOG_RIGHT			: STRAFE_RIGHT !FORWARD !BACKWARD
+		
+	  DOG_BACKWARD		              : +HAS_WEAPON
+	  DOG_BACKWARD		              : -HAS_WEAPON
+
+	  DOG_JUMP_STANDING		: +JUMP ONGROUND !DUCKED_VIEW_IN_WATER
+	}
+}
+
+state DOG_LEFT
+{
+	entrycommands
+	{
+	  movementstealth "0.25"
+	  moveposflags "standing" "running"
+          exec global/SMART_HOUNDS.scr "LEFT"
+	}
+
+	legs
+	{
+	  unarmed_stand_run_left			: default
+	}
+
+	states
+	{
+	  DOG_FALL				: FALLING
+
+	  DOG_CROUCH			: ONGROUND +CROUCH !DUCKED_VIEW_IN_WATER
+	  DOG_CROUCH_DENIED		: ONGROUND +CROUCH DUCKED_VIEW_IN_WATER
+
+	  IN_DOG				: !HAS_VELOCITY
+	  IN_DOG				: BLOCKED "2"
+
+	  DOG_WALK_FORWARD		: !RUN FORWARD !STRAFE_LEFT !STRAFE_RIGHT
+	  DOG_WALK_BACKWARD		: !RUN BACKWARD !STRAFE_LEFT !STRAFE_RIGHT
+	  DOG_WALK_LEFT			: !RUN STRAFE_LEFT
+	  DOG_WALK_BACKWARD		: !RUN STRAFE_RIGHT
+
+	  DOG_FORWARD			: FORWARD !STRAFE_LEFT !STRAFE_RIGHT
+	  DOG_BACKWARD	        	              : BACKWARD !STRAFE_LEFT !STRAFE_RIGHT
+	  DOG_RIGHT			: STRAFE_RIGHT
+		
+	  DOG_LEFT			: +HAS_WEAPON
+	  DOG_LEFT			: -HAS_WEAPON
+
+	  DOG_JUMP_STANDING		: +JUMP ONGROUND !DUCKED_VIEW_IN_WATER
+	}
+}
+
+state DOG_RIGHT
+{
+	entrycommands
+	{
+	  movementstealth "0.25"
+	  moveposflags "standing" "running"
+	  exec global/SMART_HOUNDS.scr "RIGHT"
+	}
+
+	legs
+	{
+	  unarmed_stand_run_right			: default
+	}
+
+	states
+	{
+	  DOG_FALL				: FALLING
+
+	  DOG_CROUCH			: ONGROUND +CROUCH !DUCKED_VIEW_IN_WATER
+	  DOG_CROUCH_DENIED		: ONGROUND +CROUCH DUCKED_VIEW_IN_WATER
+
+	  IN_DOG				: !HAS_VELOCITY
+	  IN_DOG				: BLOCKED "2"
+		
+	  DOG_WALK_FORWARD		: !RUN FORWARD !STRAFE_LEFT !STRAFE_RIGHT
+	  DOG_WALK_BACKWARD		: !RUN BACKWARD !STRAFE_LEFT !STRAFE_RIGHT
+	  DOG_WALK_LEFT			: !RUN STRAFE_LEFT
+	  DOG_WALK_BACKWARD		: !RUN STRAFE_RIGHT
+
+	  DOG_FORWARD			: FORWARD !STRAFE_LEFT !STRAFE_RIGHT
+	  DOG_BACKWARD		              : BACKWARD !STRAFE_LEFT !STRAFE_RIGHT
+	  DOG_LEFT			: STRAFE_LEFT
+
+	  DOG_RIGHT			: +HAS_WEAPON
+	  DOG_RIGHT			: -HAS_WEAPON
+
+	  DOG_JUMP_STANDING		: +JUMP ONGROUND !DUCKED_VIEW_IN_WATER
+	}
+
+}
+
+state DOG_WALK_RIGHT
+{
+	entrycommands
+	{
+	  movementstealth "0.75"
+	  moveposflags "standing" "walking"
+	  exec global/SMART_HOUNDS.scr "RIGHT"
+	}
+
+	legs
+	{
+	  unarmed_stand_walk_right			: default
+              }
+
+	states
+	{
+	  DOG_FALL			: FALLING
+
+	  DOG_CROUCH			: ONGROUND +CROUCH !DUCKED_VIEW_IN_WATER
+	  DOG_CROUCH_DENIED		: ONGROUND +CROUCH DUCKED_VIEW_IN_WATER
+
+	  IN_DOG				: BLOCKED "2"
+	  IN_DOG				: !HAS_VELOCITY
+		
+	  DOG_FORWARD			: RUN FORWARD !STRAFE_LEFT !STRAFE_RIGHT
+	  DOG_BACKWARD		              : RUN BACKWARD !STRAFE_LEFT !STRAFE_RIGHT
+	  DOG_LEFT			: RUN STRAFE_LEFT
+	  DOG_RIGHT			: RUN STRAFE_RIGHT
+		
+	  DOG_WALK_FORWARD		: FORWARD !STRAFE_LEFT !STRAFE_RIGHT
+	  DOG_WALK_BACKWARD		: BACKWARD !STRAFE_LEFT !STRAFE_RIGHT
+	  DOG_WALK_LEFT			: STRAFE_LEFT
+		
+	  DOG_WALK_RIGHT			: +HAS_WEAPON
+	  DOG_WALK_RIGHT			: -HAS_WEAPON
+
+	  DOG_JUMP_STANDING		: +JUMP ONGROUND !DUCKED_VIEW_IN_WATER
+	}
+
+}
+
+state DOG_WALK_LEFT
+{
+	entrycommands
+	{
+	  movementstealth "0.75"
+	  moveposflags "standing" "walking"
+	  exec global/SMART_HOUNDS.scr "LEFT"
+	}
+
+	legs
+	{
+	  unarmed_stand_walk_left				: default
+	}
+
+	states
+	{
+	  DOG_FALL				: FALLING
+
+	  DOG_CROUCH			: ONGROUND +CROUCH !DUCKED_VIEW_IN_WATER
+	  DOG_CROUCH_DENIED		: ONGROUND +CROUCH DUCKED_VIEW_IN_WATER
+
+	  IN_DOG				: BLOCKED "2"
+	  IN_DOG				: !HAS_VELOCITY
+		
+	  DOG_FORWARD			: RUN FORWARD !STRAFE_LEFT !STRAFE_RIGHT
+	  DOG_BACKWARD		              : RUN BACKWARD !STRAFE_LEFT !STRAFE_RIGHT
+	  DOG_LEFT			: RUN STRAFE_LEFT
+	  DOG_RIGHT			: RUN STRAFE_RIGHT
+		
+	  DOG_WALK_FORWARD		: FORWARD !STRAFE_LEFT !STRAFE_RIGHT
+	  DOG_WALK_BACKWARD		: BACKWARD !STRAFE_LEFT !STRAFE_RIGHT
+	  DOG_WALK_RIGHT			: STRAFE_RIGHT
+		
+	  DOG_WALK_LEFT			: +HAS_WEAPON
+  	  DOG_WALK_LEFT			: -HAS_WEAPON
+
+	  DOG_JUMP_STANDING		: +JUMP ONGROUND !DUCKED_VIEW_IN_WATER
+	}
+
+}
+
+
+state DOG_WALK_FORWARD
+{
+	entrycommands
+	{
+	  movementstealth "0.75"
+	  moveposflags "standing" "walking"
+	  exec global/SMART_HOUNDS.scr "FORWARD"
+	}
+
+	legs
+	{
+	  unarmed_stand_walk_fwd			: default
+	}
+
+	states
+	{
+	  DOG_FALL				: FALLING
+
+	  DOG_CROUCH			: ONGROUND +CROUCH !DUCKED_VIEW_IN_WATER
+	  DOG_CROUCH_DENIED		: ONGROUND +CROUCH DUCKED_VIEW_IN_WATER
+
+	  IN_DOG				: BLOCKED "2"
+	  IN_DOG				: !HAS_VELOCITY
+		
+	  DOG_FORWARD			: RUN FORWARD
+	  DOG_BACKWARD		              : RUN BACKWARD
+	  DOG_LEFT			: RUN STRAFE_LEFT !FORWARD !BACKWARD
+	  DOG_RIGHT			: RUN STRAFE_RIGHT !FORWARD !BACKWARD
+		
+	  DOG_WALK_BACKWARD		: BACKWARD
+	  DOG_WALK_LEFT			: STRAFE_LEFT !FORWARD !BACKWARD
+	  DOG_WALK_RIGHT			: STRAFE_RIGHT !FORWARD !BACKWARD
+		
+	  DOG_WALK_FORWARD		: +HAS_WEAPON
+	  DOG_WALK_FORWARD		: -HAS_WEAPON
+
+	  DOG_JUMP_STANDING	              : +JUMP ONGROUND !DUCKED_VIEW_IN_WATER
+	}
+
+}
+
+state DOG_WALK_BACKWARD
+{
+	entrycommands
+	{
+	  movementstealth "0.75"
+	  moveposflags "standing" "walking"
+	  exec global/SMART_HOUNDS.scr "BACK"
+	}
+
+	legs
+	{
+	  unarmed_stand_walk_back				: default
+	}
+
+	states
+	{
+	  DOG_FALL				: FALLING
+
+	  DOG_CROUCH			: ONGROUND +CROUCH !DUCKED_VIEW_IN_WATER
+	  DOG_CROUCH_DENIED		: ONGROUND +CROUCH DUCKED_VIEW_IN_WATER
+
+	  IN_DOG				: BLOCKED "2"
+	  IN_DOG				: !HAS_VELOCITY
+		
+	  DOG_FORWARD			: RUN FORWARD
+	  DOG_BACKWARD		              : RUN BACKWARD
+	  DOG_LEFT			: RUN STRAFE_LEFT !FORWARD !BACKWARD
+	  DOG_RIGHT			: RUN STRAFE_RIGHT !FORWARD !BACKWARD
+		
+	  DOG_WALK_FORWARD		: FORWARD
+	  DOG_WALK_LEFT			: STRAFE_LEFT !FORWARD !BACKWARD
+	  DOG_WALK_RIGHT			: STRAFE_RIGHT !FORWARD !BACKWARD
+		
+	  DOG_WALK_BACKWARD		: +HAS_WEAPON
+	  DOG_WALK_BACKWARD		: -HAS_WEAPON
+
+	  DOG_JUMP_STANDING	              : +JUMP ONGROUND !DUCKED_VIEW_IN_WATER
+	}
+
+}
+
+state DOG_CROUCH
+{
+	entrycommands
+	{
+	  modheight "duck"
+	  movementstealth "1.25"
+	  moveposflags "crouching"
+          exec global/SMART_HOUNDS.scr "CROUCH"
+	}
+
+	legs
+	{
+	  unarmed_crouch_idle		           : default
+	}
+
+	states
+	{
+	  DOG_FALL_DUCKED		           : FALLING
+		
+	  IN_DOG				           : JUMP CHECK_HEIGHT "stand"
+	  IN_DOG				           : +CROUCH CHECK_HEIGHT "stand"
+	  IN_DOG				           : VIEW_IN_WATER CHECK_HEIGHT "stand"		
+
+	  DOG_FORWARD		                         : RUN FORWARD HAS_VELOCITY !BLOCKED "2"
+	  DOG_BACKWARD		                         : RUN BACKWARD HAS_VELOCITY !BLOCKED "2"
+	  DOG_LEFT		          	           : RUN STRAFE_LEFT HAS_VELOCITY !BLOCKED "2"
+	  DOG_BACKWARD		                         : RUN STRAFE_RIGHT HAS_VELOCITY !BLOCKED "2"
+
+	  DOG_WALK_FORWARD	        	           : FORWARD HAS_VELOCITY !BLOCKED "2"
+	  DOG_WALK_BACKWARD	                         : BACKWARD HAS_VELOCITY !BLOCKED "2"
+	  DOG_WALK_LEFT		                         : STRAFE_LEFT HAS_VELOCITY !BLOCKED "2"
+	  DOG_WALK_BACKWARD                               : STRAFE_RIGHT HAS_VELOCITY !BLOCKED "2"
+ 
+	  DOG_CROUCH			            : +HAS_WEAPON
+	  DOG_CROUCH			            : -HAS_WEAPON
+	}
+}
+
+state DOG_CROUCH_DENIED
+{
+	entrycommands
+	{
+	  iprint "Can't duck under water, PHIL {SFX} FISHER says so!"
+	}
+	
+	states
+	{
+	  IN_DOG	                                                       : default
+	}
+}
+
+state DOG_JUMP_STANDING
+{
+	entrycommands
+	{
+	  movementstealth "0.3"
+	  moveposflags "crouching"
+	  modheight "jumpstart"
+	  commanddelay 0.05 jump 100
+	  exec global/SMART_HOUNDS.scr "JUMP"
+	}
+
+	legs
+	{
+	  unarmed_jump_takeoff			: default
+	}
+	
+	states
+	{
+	  DOG_FALL_DUCKED_WANT_STAND	               : ANIMDONE_LEGS !DUCKED_VIEW_IN_WATER
+	  DOG_FALL			               : ANIMDONE_LEGS
+	}
+}
+
+state DOG_JUMP
+{
+
+	entrycommands
+	{
+	  movementstealth "0.3"
+	  moveposflags "crouching"
+	  modheight "jumpstart"
+	  commanddelay 0.05 jump 100
+          exec global/SMART_HOUNDS.scr "JUMP"
+	}
+
+              legs
+              {
+                unarmed_jump_takeoff             : default
+              }
+
+	states
+	{ 
+	  DOG_FALL_DUCKED_WANT_STAND	             : ANIMDONE_LEGS !DUCKED_VIEW_IN_WATER
+                DOG_FALL		                           : ANIMDONE_LEGS
+	}
+}
+
+state DOG_FALL
+{
+	entrycommands
+	{
+	  modheight "stand"
+	  movementstealth "0.5"
+	  moveposflags "offground" "falling"
+	}
+
+	legs
+	{
+	  unarmed_fall			              : default
+	}
+
+	states
+	{
+	  IN_DOG					: ONGROUND
+	  DOG_FALL				: FALLING
+	}
+}
+
+state DOG_FALL_DUCKED_WANT_STAND
+{
+	entrycommands
+	{
+	  modheight "duck"
+	  movementstealth "0.75"
+	  moveposflags "offground" "falling"
+	}
+
+	legs
+	{
+	  unarmed_fall			: default
+	}
+
+	states
+	{
+	  DOG_FALL_DUCKED			   : +CROUCH
+	  DOG_LAND				   : ONGROUND CHECK_HEIGHT "stand"
+	  DOG_LAND_DUCKED			   : ONGROUND
+	}
+}
+
+state DOG_FALL_DUCKED
+{
+	entrycommands
+	{
+	  modheight "duck"
+	  movementstealth "0.75"
+	  moveposflags "offground" "falling"
+	}
+	legs
+	{
+	  unarmed_fall			                   : default
+	}
+	
+	states
+	{
+	  DOG_LAND_DUCKED			      : ONGROUND
+	}
+}
+
+state DOG_LAND_DUCKED
+{
+	entrycommands
+	{
+	  movementstealth "0.5"
+	  moveposflags "crouching"
+	}
+	states
+	{
+	  IN_DOG				                      : HARD_IMPACT !CROUCH CHECK_HEIGHT "stand"
+	  DOG_CROUCH			                      : default
+	}
+}
+
+state DOG_LAND
+{
+	entrycommands
+	{
+	  modheight "stand"
+	  movementstealth "0.5"
+	  moveposflags "standing"
+	}
+
+	states
+	{
+	  IN_DOG		                                      : default		 		
+	}
+}
+
+state DOG_TURRET_START
+{
+
+	entrycommands
+	{
+                exec global/DOG_USINGTURRET.scr
+	}
+
+	legs
+	{
+	  unarmed_idle : TURRET_TYPE "MG42"
+	  unarmed_idle : default
+	}	
+
+	states
+	{
+	  DOG_TURRET_USING		           : ANIMDONE_LEGS
+	}
+}
+
+state DOG_TURRET_USING
+{
+
+	legs
+	{
+	  unarmed_idle : TURRET_TYPE "MG42"
+	  unarmed_idle : default
+	}
+	
+	states
+	{
+	  IN_DOG                                                       : !IS_USING_TURRET
+	}
+}
+
+//====================================================================================================================
+// DOG STATES END
+//====================================================================================================================
+
+
+////////////////////////////////////////////////////////////////
+//
+// JETPACK
+//
+////////////////////////////////////////////////////////////////
+
+state JETPACK
+{
+	//movetype legs
+	entrycommands
+	{
+		modheight "stand"
+		movementstealth "0.5"
+		moveposflags "offground" "falling"
+	}
+
+	legs
+	{
+		mp40_stand_idle				: IS_WEAPON_ACTIVE "mainhand" "MP40"
+		mp44_stand_idle				: IS_WEAPON_ACTIVE "mainhand" "StG 44"
+		bazooka_stand_idle			: IS_WEAPON_ACTIVE "mainhand" "Bazooka"
+		bazooka_stand_idle			: IS_WEAPON_ACTIVE "mainhand" "Panzerschreck"
+		shotgun_stand_idle			: IS_WEAPON_ACTIVE "mainhand" "Shotgun"
+		steilhandgranate_stand_idle	: IS_WEAPON_ACTIVE "mainhand" "Stielhandgranate"
+		pistol_stand_idle			: IS_WEAPONCLASS_ACTIVE "mainhand" "pistol" 
+		rifle_stand_idle			: IS_WEAPONCLASS_ACTIVE "mainhand" "rifle" 
+		grenade_stand_idle			: IS_WEAPONCLASS_ACTIVE "mainhand" "grenade" 
+		smg_stand_idle				: IS_WEAPONCLASS_ACTIVE "mainhand" "smg" 
+		mg_stand_idle				: IS_WEAPONCLASS_ACTIVE "mainhand" "mg" 
+//		pistol_stand_idle			: IS_WEAPONCLASS_ACTIVE "mainhand" "item" // hold all items like a pistol for now
+		unarmed_stand_idle			: default
+	}
+	states
+	{
+		JETPACK_UP		: USE !STRAFE_RIGHT !STRAFE_LEFT !BACKWARD !FORWARD !ONGROUND 
+		JETPACK_LAND		: ONGROUND
+		JETPACK_FORWARD		: USE FORWARD 
+		JETPACK_BACKWARD	: USE BACKWARD 
+		JETPACK_LEFT		: USE STRAFE_LEFT 
+		JETPACK_RIGHT		: USE STRAFE_RIGHT 
+	}
+}
+
+state JETPACK_LAND
+{
+	entrycommands
+	{
+		exec jetpack/jetpack_movement.scr "LAND"
+	}
+	states
+	{
+		STAND	: default
+	}
+}
+
+state JETPACK_FORWARD
+{
+	entrycommands
+	{
+		exec jetpack/jetpack_movement.scr "MOVEMENT_FORWARD"
+	}
+	states
+	{
+		JETPACK_UP		: USE !STRAFE_RIGHT !STRAFE_LEFT !BACKWARD !FORWARD !ONGROUND 
+		JETPACK_LAND		: ONGROUND
+		JETPACK_FORWARD		: USE FORWARD 
+		JETPACK_BACKWARD	: USE BACKWARD 
+		JETPACK_LEFT		: USE STRAFE_LEFT 
+		JETPACK_RIGHT		: USE STRAFE_RIGHT 
+	}
+}
+	
+state JETPACK_BACKWARD
+{
+	entrycommands
+	{
+		exec jetpack/jetpack_movement.scr "MOVEMENT_BACKWARD"
+	}
+	states
+	{
+		JETPACK_UP		: USE !STRAFE_RIGHT !STRAFE_LEFT !BACKWARD !FORWARD !ONGROUND 
+		JETPACK_LAND		: ONGROUND
+		JETPACK_FORWARD		: USE FORWARD 
+		JETPACK_BACKWARD	: USE BACKWARD 
+		JETPACK_LEFT		: USE STRAFE_LEFT 
+		JETPACK_RIGHT		: USE STRAFE_RIGHT 
+	}
+}
+
+state JETPACK_LEFT
+{
+	entrycommands
+	{
+		exec jetpack/jetpack_movement.scr "MOVEMENT_LEFT"
+	}
+	states
+	{
+		JETPACK_UP		: USE !STRAFE_RIGHT !STRAFE_LEFT !BACKWARD !FORWARD !ONGROUND 
+		JETPACK_LAND		: ONGROUND
+		JETPACK_FORWARD		: USE FORWARD 
+		JETPACK_BACKWARD	: USE BACKWARD 
+		JETPACK_LEFT		: USE STRAFE_LEFT 
+		JETPACK_RIGHT		: USE STRAFE_RIGHT  
+	}
+}
+
+state JETPACK_RIGHT
+{
+	entrycommands
+	{
+		exec jetpack/jetpack_movement.scr "MOVEMENT_RIGHT"
+	}
+	states
+	{
+		JETPACK_UP		: USE !STRAFE_RIGHT !STRAFE_LEFT !BACKWARD !FORWARD !ONGROUND 
+		JETPACK_LAND		: ONGROUND
+		JETPACK_FORWARD		: USE FORWARD 
+		JETPACK_BACKWARD	: USE BACKWARD 
+		JETPACK_LEFT		: USE STRAFE_LEFT 
+		JETPACK_RIGHT		: USE STRAFE_RIGHT 
+	}
+}
+
+state JETPACK_UP
+{
+	entrycommands
+	{
+		exec jetpack/jetpack_movement.scr "THRUST"
+	}
+	states
+	{
+		JETPACK_UP		: USE !STRAFE_RIGHT !STRAFE_LEFT !BACKWARD !FORWARD !ONGROUND 
+		JETPACK_LAND		: ONGROUND
+		JETPACK_FORWARD		: USE FORWARD 
+		JETPACK_BACKWARD	: USE BACKWARD 
+		JETPACK_LEFT		: USE STRAFE_LEFT 
+		JETPACK_RIGHT		: USE STRAFE_RIGHT 
+	}
+}
+
+////////////////////////////////////////////////////////////////
+//
+// JETPACK END
+//
+////////////////////////////////////////////////////////////////

@@ -4,7 +4,7 @@
 
 main:
 
-	if(level.run["spec_eye"] == "1")
+	if(level.run["spec-eye"] == "1")
 	{
 		thread SPEC_EYE_ON
 	}

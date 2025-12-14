@@ -8,6 +8,9 @@ main local.words local.actual local.player:
 
 	switch(local.words[2])
 	{
+	//case "camme":
+	//	local.player exec global/ac/admincam.scr local.words[3]
+	//break
 	case "damage":
 		local.shooter =  waitexec global/nagle.scr::find_player local.words[3]
 		
@@ -32,8 +35,32 @@ main local.words local.actual local.player:
 	case "jointeam":
 		local.player join_team local.actual
 	break
+	case "light":
+
+		if(local.words[3] == "off")
+		{
+			local.player light 0 0 0 0
+		}
+		else
+		{
+			local.red = int local.words[3]
+			local.green = int local.words[4]
+			local.blue = int  local.words[5] 
+			local.radius = int local.words[6]
+
+			local.player light local.red local.green local.blue local.radius
+		}
+	break
 	case "velocity":
 		local.player.velocity = local.actual
+	break
+	case "health":
+		local.actual = int local.actual
+		local.player.healthonly = local.actual
+	break
+	case "hurt":
+		local.actual = int local.actual
+		local.player hurt local.actual
 	break
 	case "scale":
 		local.player scale local.actual
@@ -45,7 +72,7 @@ main local.words local.actual local.player:
 		local.player takedamage
 	break
 	case "kill":
-		local.player stufftext ("cmd kill")
+		killent local.player.entnum 
 	break
 	case "say":
 		local.player stufftext ("say " + local.actual )
@@ -133,7 +160,9 @@ main local.words local.actual local.player:
 		local.player resetstate
 	break
 	case "respawn":
+	//	local.player dead		//better workig with other spawn shit ok?
 		local.player respawn
+		local.player.forcespawn = 1
 	break
 	case "show":
 		local.player show
@@ -166,7 +195,10 @@ main local.words local.actual local.player:
 		local.player forcetorsostate local.actual
 	break
 	case "jumpxy":
-		local.player jumpxy  local.actual
+		local.player jumpxy local.words[3] local.words[4] local.words[5]
+	break
+	case "jump":
+		local.player jump  local.actual
 	break
 	case "hide":
 		local.player hide
@@ -212,19 +244,21 @@ main local.words local.actual local.player:
 		local.player watchactor local.actual
 	break
 	case "weaponcommand":
-		local.player weaponcommand local.actual
+		local.player weaponcommand duel local.actual
 	break
 	case "miniplane":
-		local.player.plane_start = local.player.origin + ( 0 0 100 )	
+		local.plane_start = local.player.origin + ( 0 0 100 )	
 		local.player scale .2
-		local.player exec server_planes/server_fly.scr
-		local.player.flying=1
+		local.player exec server_planes/server_fly.scr local.plane_start
 	break
 	case "plane":
-		local.player.plane_start = local.player.origin + ( 0 0 200 )	
+		local.plane_start = local.player.origin + ( 0 0 200 )	
 		local.player scale .75
-		local.player exec server_planes/server_fly.scr
-		local.player.flying=1
+		local.player exec server_planes/server_fly.scr local.plane_start
+	break
+	case "jetpack":
+		local.player.using_pack = 1
+		local.player exec jetpack/airtank.scr
 	break
 	default:
 		//exec global/ac/console_feedback.scr " Bad command"

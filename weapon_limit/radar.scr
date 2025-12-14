@@ -1,14 +1,12 @@
 main:
 
-	if(level.run["weapons_limiter"] != "1"){end}
+	if(level.run["weapons-limiter"] != "1"){end}
 
 	local.player = self
 
 	local.player forcetorsostate GET_WEAPON
 
 	local.team = local.player.dmteam
-
-
 
 	while(local.player.DMweapon == NIL || local.player.DMweapon == "none")
 	{

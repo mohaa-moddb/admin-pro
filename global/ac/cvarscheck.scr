@@ -1,7 +1,6 @@
 //handles all the input through console.
 
 main:
-
 	thread setupadmins
 
 	while(1)
@@ -74,7 +73,6 @@ split_cmd local.info:
 end
 
 split_cmds local.wordsarray local.actual:
-
 
 	local.words = local.wordsarray[1]
 	local.wordcount = local.wordsarray[2]
@@ -219,5 +217,6 @@ split_cmds local.wordsarray local.actual:
 		}         
 	}   
 
+	exec global/ac/console_feedback.scr "Possible Bad player ID"
 end
 

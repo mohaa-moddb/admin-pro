@@ -1,15 +1,8 @@
+// 26/11/2005 12:33 Added bt anims code by cobra
+
 // Global chute script for allied assault
 
 main:
-
-	if(self.ejecting==1)
-	{
-		self gravity 1
-		self.ejecting=0
-	}
-end
-
-parachute:
 
 	local.eject = waitexec global/settings.scr::getcmd "eject"
 
@@ -38,7 +31,16 @@ parachute:
 	local.player.viewangles = ( local.player.viewangles[0] local.player.viewangles[1] 0 )
 
 	local.chute = spawn script_model
-	local.chute model "models/static/parachute_actors.tik" 
+
+	if(game.game == "BT")
+	{
+		local.chute model "models/equipment/parachute.tik"
+	}
+	else
+	{
+		local.chute model "models/static/parachute_actors.tik" 
+	}
+
 	local.chute.origin =  local.player.origin
 	local.chute attach local.player "Bip01 Spine2" 0 (0 0 0)
 	local.chute notsolid
@@ -64,8 +66,34 @@ parachute:
 			local.player.ejecting=0
 		}
 
+		if( ( local.player getposition ) == "standing")
+		{
+			local.player.ejecting=0
+		}
+
 		waitframe
 	}
 
-	local.chute remove
+	if(game.game == "BT")
+	{
+		local.chute detach local.para1
+		local.chute speed 45 //205
+		local.chute movedown 64
+		local.chute waitmove
+		local.chute anim collapse
+		local.chute waittill animdone
+		wait 5
+		local.chute remove
+	}
+	else
+	{
+		local.chute detach local.para1
+		local.chute speed 50
+		local.chute movedown 200
+		local.chute waitmove
+		local.chute remove
+	  
+	}
+		
+	self gravity 1
 end

@@ -1,16 +1,27 @@
 main:
 
-	if(level.run["weapons_limiter"] != "1"){end}
+	if(level.run["weapons-limiter"] != "1"){end}
 
-	if(game.file["settings/weapons_limiter"])
+	if(game.file["weapons-limiter"])
 	{
 		local.threads = "weapons" + game.game
-		local.weapons  = waitexec  game.file["settings/weapons_limiter"]::local.threads
+		local.weapons  = waitexec  game.file["weapons-limiter"]::local.threads
 		local.weapons = waitthread global/strings.scr::Array_to_lower local.weapons
 		game.limiter_weapons = local.weapons	
 
 		local.threads = "secondryweapons" + game.game
-		game.secondry_limiter_settings = waitexec game.file["settings/weapons_limiter"]::local.threads
+		game.secondry_limiter_settings = waitexec game.file["weapons-limiter"]::local.threads
+
+		//get the strings
+		game.weapons_strings =  waitexec game.file["weapons-limiter"]::strings
+
+		if(gamegame != "AA")
+		{
+			if(game.skins == NIL)
+			{
+				exec weapon_limit/secondry_weapons.scr::load_skins //if not yet done, Load the skins 
+			}
+		}
 	}
 	else
 	{
@@ -19,11 +30,11 @@ main:
 
 	if(game.limiter_weapons == NIL)
 	{
-		level.run["weapons_limiter"] = "0"
+		level.run["weapons-limiter"] = "0"
 		waitframe
 	}
 
-	exec global/ac/spawn_detect.scr weapon_limit/radar.scr
+	//exec global/ac/spawn_detect.scr weapon_limit/radar.scr
 
 	thread secondryweapons
 end
@@ -32,8 +43,8 @@ secondryweapons: //Check to  take pistols or nades or stuff
 
 	if(game.secondry_limiter_settings == NIL)
 	{
-		level.run["weapons_limiter"] = "0"
-		waitframe
+		level.run["weapons-limiter"] = "0"
+		end
 	}
 
 	local.found = 0
@@ -41,7 +52,7 @@ secondryweapons: //Check to  take pistols or nades or stuff
 	{
 		if( game.secondry_limiter_settings[local.i][2] == "1")
 		{	
-			if(level.run["weapons_limiter"] != "1"){end}
+			if(level.run["weapons-limiter"] != "1"){end}
 			local.found++
 			local.take[local.found] = game.secondry_limiter_settings[local.i][3]
 		}
@@ -55,7 +66,7 @@ secondryweapons: //Check to  take pistols or nades or stuff
 		{
 			for(local.p=1;local.p <= local.found; local.p++)
 			{
-				if(level.run["weapons_limiter"] != "1"){end}
+				if(level.run["weapons-limiter"] != "1"){end}
 				$player[local.i] take local.take[local.p]
 			}
 		}

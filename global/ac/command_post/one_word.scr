@@ -43,6 +43,15 @@ main local.word:
 			iprintln_noloc  local.hello[local.i][1]
 		}
 	break	
+	case "reset":
+		exec global/ac/admin_feedback.scr "Admin-Pro Mod Reset"
+		exec global/ac/console_feedback.scr "Admin-Pro Mod Reset"
+
+		level.camper_setup=0
+		game.reset = "1" //set reset on for now, it will set itself back when advanced.txt is executed
+		exec global/settings.scr
+
+	break	
 	case "inputtoggle":
 		if (game.input_type == "windows")
 		{

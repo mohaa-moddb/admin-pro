@@ -4,27 +4,16 @@ main:
 	{
 		if(game.run_spawn_protect_on_sh_and_bt != 1)
 		{
-			level.run["spawn_protection"] = 0
-
-			for(local.i = 1; local.i <= level.spawn_scripts.size; local.i++)
-			{
-				if(level.spawn_scripts[local.i] == "global/ac/spawn_protection.scr")
-				{
-					level.spawn_scripts[local.i] = NIL	
-				}
-			}		
+			level.run["spawn-protection"] = 0
 		}
 		
 	}
 
-
-	if(level.run["spawn_protection"]!="1"){end}
-
-
-	if(level.spawnpotect!=1)
-	{
-		level.spawnpotect=1
-		exec global/ac/spawn_detect.scr global/ac/spawn_protection.scr // exec with this script path
-	}	
+//
+//	if(level.spawnpotect!=1)
+//	{
+//		level.spawnpotect=1
+//		exec global/ac/spawn_detect.scr global/ac/spawn_protection.scr // exec with this script path
+//	}	
 
 end

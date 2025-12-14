@@ -1,6 +1,6 @@
 //
 // Anti camper SFX camper settings.txt
-// version 1.00
+// version 1.20
 //
 // Questions should go to www.mods-r-us.net forums or elgan.sayer@gmail.com
 //
@@ -9,13 +9,12 @@
 // **************************************************************************************************************************************
 
 
-commands:
+main:
 
 	// Commands and Settings
 	local.campersettings = makearray
 		//command			//setting			//help	
-		"counter"			"0"				" Display a HUD showing the team camps. 1 = On, 0 = Off"
-		"type"				"fire bomb"				" type - sets whats to do to campers set to random for random"	
+		"type"				"fire bomb"			" type - sets whats to do to campers set to random for random"	
 		"weaponscheck"   		"0"  				" Check for weapons and use their specified time."
 		"time"  			"40"				" Amount of time before they become a camper"				
 		"message"			"You were camping"		" Sets the message to send to campers when they camp. If no message is set nothing will be displayed"
@@ -23,27 +22,28 @@ commands:
 		"radius"        		"230" 				" radius - Sets the radius size of the camping spot"
 		"hurt"				"5"  				" hurt - ammount of health to take away"
 		"duration"			"spot" 				" Duration- This will set for how long the camper type runs on the player. eg, set it to 10, it will run for 10 seconds. You can also set it to death and spot. death - run until dead, spot - while in camping radius. duration has replaced to_death"
-		"hurt_delay"			"1"				" Time between damage is applied to campers in damagable types.Fire for example. time in seconds"
-		"say_pos"			"1"				" This will announce the players position like FT"
+		"hurt-delay"			"1"				" Time between damage is applied to campers in damagable types.Fire for example. time in seconds"
+		"say-pos"			"1"				" This will announce the players position like FT"
+		"turret-camp" 			"1"				" Do players using turret weapons camp, 1 - yes, 0 - no"
 		"maxcamps"			"0"				" Sets max camp times. If exceeded camper is kicked (this is set by the punishment script in ac)."																					global/ac/punishment.scr	
 	//bomb setting commands				
 		"silent" 			"0"				" ticktime - set 1 to make the tick not run, 0 makes it run"
 		"ticktime"       		"10" 				" ticktime - how long the bomb ticks for before bang"
-		"bomb_exp_mdl" 			"animate/fx_mortar_dirt.tik"	" Set the model tik for the bomb explosion"
-		"bomb_exp_mdl2"			"fx/scriptbazookaexplosion.tik"	" Set the model tik for the 2nd bomb explosion"
-		"bomb_mdl" 			"items/explosive.tik"		" Set the model tik for the bomb"
+		"bomb-exp-mdl" 			"animate/fx_mortar_dirt.tik"	" Set the model tik for the bomb explosion"
+		"bomb-exp-mdl2"			"fx/scriptbazookaexplosion.tik"	" Set the model tik for the 2nd bomb explosion"
+		"bomb-mdl" 			"items/explosive.tik"		" Set the model tik for the bomb"
 	//light settings
 		"lightcolour"   		"0 0 1 100" 			" lightcolour - RGB radius"
 	// giant settings
 		"scalesize" 			"3"				" scalesize - sets size of player when camping in scale mode"
 	// tent
-		"tent_mdl" 			"models/static/tent.tik"	" Set the model tik for the tent"
+		"tent-mdl" 			"models/static/tent.tik"	" Set the model tik for the tent"
 	// tele
-		"tele_spot" 			( 0 0 400 )			" teleport to this location on tele type"
+		"tele-spot" 			( 0 0 400 )			" teleport to this location on tele type"
 	// fire
-		"fire_mdl" 			"static/fire.tik"		" Set the model tik for the fire"
+		"fire-mdl" 			"static/fire.tik"		" Set the model tik for the fire"
 	// spin
-		"spin_speed" 			"3"				" Speed for spinning, Tip: DOnt put it too low."
+		"spin-speed" 			"3"				" Speed for spinning, Tip: DOnt put it too low."
 	endarray
 
 
@@ -80,7 +80,7 @@ end local.campersettings
 // This is the map list. The camper mod  checks this list for maps. if the map is not found the mod turns itself off.
 // You can add maps and take maps form the list. for more info see the instructions.
 
-maplist:
+maps:
 	//MAPS
 	local.maplist = makeArray
 		//dm maps
@@ -97,36 +97,35 @@ maplist:
 		"obj/obj_team3"
 		"obj/obj_team4"
 		//sh maps
-		"DM/MP_Bahnhof_DM"
-		"DM/MP_Bazaar_DM"
-		"DM/MP_Brest_DM"
-		"DM/MP_Gewitter_DM"
-		"DM/MP_Holland_DM"		
-		"DM/MP_Stadt_DM"
-		"DM/MP_malta`_DM"
-		"DM/MP_Unterseite_DM"
-		"DM/MP_Verschneit_DM"
-		//BT only / DM/
-		"DM/MP_Palermo_DM"
-		"DM/mp_malta_dm"
-		//SH + BT /OBJ
-		"OBJ/MP_Ardennes_TOW"
-		"OBJ/MP_Berlin_TOW"
-		"OBJ/MP_Flughafen_TOW"
-		"OBJ/MP_Druckkammern_TOW"
-		//BT only /OBJ
-		"OBJ/MP_Palermo_OBJ"
-		"OBJ/MP_MonteCassino_TOW"
-		"OBJ/MP_MonteBattaglia_TOW"
-		"OBJ/MP_Kasserine_TOW"
-		"OBJ/mp_castello_obj"
-		"OBJ/MP_Bologna_OBJ"
-		"OBJ/mp_bizertefort_obj"
-		//BT only /LIB
-		"LIB/mp_tunisia_lib"
-		"LIB/mp_bizerteharbor_lib"
-		"LIB/mp_anzio_lib"
-		"LIB/mp_ship_lib"
+		"dm/mp_bahnhof_dm"
+		"dm/mp_bazaar_dm"
+		"dm/mp_brest_dm"
+		"dm/mp_gewitter_dm"
+		"dm/mp_holland_dm"		
+		"dm/mp_stadt_dm"
+		"dm/mp_unterseite_dm"
+		"dm/mp_verschneit_dm"
+		//bt only / dm/
+		"dm/mp_palermo_dm"
+		"dm/mp_malta_dm"
+		//sh + bt /obj
+		"obj/mp_ardennes_tow"
+		"obj/mp_berlin_tow"
+		"obj/mp_flughafen_tow"
+		"obj/mp_druckkammern_tow"
+		//bt only /obj
+		"obj/mp_palermo_obj"
+		"obj/mp_montecassino_tow"
+		"obj/mp_montebattaglia_tow"
+		"obj/mp_kasserine_tow"
+		"obj/mp_castello_obj"
+		"obj/mp_bologna_obj"
+		"obj/mp_bizertefort_obj"
+		//bt only /lib
+		"lib/mp_tunisia_lib"
+		"lib/mp_bizerteharbor_lib"
+		"lib/mp_anzio_lib"
+		"lib/mp_ship_lib"
 		//custom maps	
 	endArray
 
@@ -163,13 +162,13 @@ weaponsaa:
 		"bar" 				"30"			" Sets the camping time for this weapon. 0 = immune to camping"			
 		"bazooka" 			"30"			" Sets the camping time for this weapon. 0 = immune to camping"
 		"kar98" 			"30"			" Sets the camping time for this weapon. 0 = immune to camping"
-		"kar98sniper" 			"0"			" Sets the camping time for this weapon. 0 = immune to camping"
+		"kar98sniper" 			"30"			" Sets the camping time for this weapon. 0 = immune to camping"
 		"m1_garand" 			"30"			" Sets the camping time for this weapon. 0 = immune to camping"
 		"mp40" 				"30"			" Sets the camping time for this weapon. 0 = immune to camping"
 		"mp44" 				"30"			" Sets the camping time for this weapon. 0 = immune to camping"
 		"panzerschreck" 		"30"			" Sets the camping time for this weapon. 0 = immune to camping"
 		"shotgun"			"30"			" Sets the camping time for this weapon. 0 = immune to camping"
-		"springfield" 			"0"			" Sets the camping time for this weapon. 0 = immune to camping"
+		"springfield" 			"30"			" Sets the camping time for this weapon. 0 = immune to camping"
 		"thompsonsmg" 			"30"			" Sets the camping time for this weapon. 0 = immune to camping"
 		"unarmed" 			"30"			" Sets the camping time for this weapon. 0 = immune to camping"
 	endarray

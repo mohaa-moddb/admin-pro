@@ -1,3 +1,7 @@
+//11/08/2005
+// Removed weapon get class 
+// added strings
+
 main local.model:
 
 	if(local.model=="UNARMED")
@@ -8,7 +12,7 @@ main local.model:
 	self.weapon = local.model
 	self.DMweapon = local.model
 	
-	if(level.run["weapons_limiter"] != "1"){end}
+	if(level.run["weapons-limiter"] != "1"){end}
 
 	local.drop = waitexec global/settings.scr::getcmd "dropweapons"
 	
@@ -18,14 +22,11 @@ main local.model:
 	}
 
 	self resetstate
-		
-	self.weapon = local.model
 
 	if(local.model=="models/weapons/unarmed.tik")
 	{
 		end
 	}
-		
 
 	for(local.i = 1 ; local.i <= game.limiter_weapons.size;local.i++)
 	{
@@ -36,6 +37,7 @@ main local.model:
 		{
 			if(game.limiter_weapons[local.i][2] != "" )
 			{
+
 				if(game.game == "AA")
 				{
 					self take local.model
@@ -48,10 +50,18 @@ main local.model:
 
 				self item local.weapon[2] 
 
-				self iprint ("Your weapons was swapped from " + local.weaponname[1] + " to " + local.weaponname[2] + " by admin") 1
-				local.weapon_class = waitthread get_weaponclass game.limiter_weapons[local.i][2]
-				self usestuff
-				self useweaponclass local.weapon_class
+				local.print = waitexec global/settings.scr::getcmd "swap-message"
+
+				if(local.print == "1")
+				{
+					self iprint (game.weapons_strings[1][1] + local.weaponname[1] + game.weapons_strings[2][1] + local.weaponname[2] + game.weapons_strings[3][1]) 1
+				}
+
+				//local.weapon_class = waitthread get_weaponclass game.limiter_weapons[local.i][2]
+				//self usestuff
+				//self useweaponclass local.weapon_class
+
+				self use local.weapon[2]
 				end
 			}
 			else
@@ -65,18 +75,33 @@ main local.model:
 				if(local.amount==0)
 				{
 
-					local.weapon_class = waitthread get_weaponclass game.limiter_weapons[local.i][1]
+					local.print = waitexec global/settings.scr::getcmd "swap-message"
+
+					/*
+					// Dont think this will ever run
+					//local.weapon_class = waitthread get_weaponclass game.limiter_weapons[local.i][1]
 					if(local.weapon_class == "pistol" || local.weapon_class == "grenade")
 					{
 						self take local.model
 
-						self iprint ("The admin has set that you are not allowed to use the " + local.weaponname[1]) 1
+						if(local.print == "1")
+						{
+							self iprint ("The admin has set that you are not allowed to use the " + local.weaponname[1]) 1
+						}
 					}
 					else
 					{
-						self iprint ("The admin has set that you are not allowed to use the " + local.weaponname[1] + ". Please choose a different weapon") 1
-						self thread newgun
+					*/
+
+					if(local.print == "1")
+					{
+						self iprint (game.weapons_strings[4][1] + local.weaponname[1] + game.weapons_strings[5][1] ) 1
 					}
+
+					self thread newgun
+					
+					//}
+
 					end
 				}
 
@@ -90,8 +115,9 @@ main local.model:
 				if(level.weapons_inuse[local.model] > local.amount)
 				{
 					self thread newgun
-					self iprint (local.weaponname[1]  + " is unavailable as " + local.amount + " are already in use") 1
-					self iprint "The following weapons are available:" 1
+					self iprint (local.weaponname[1] + game.weapons_strings[6][1] + local.amount + game.weapons_strings[7][1]) 1
+					
+					self iprint game.weapons_strings[8][1]  1
 					
 					wait 1
 
@@ -124,7 +150,7 @@ main local.model:
 								
 								if(local.say == 1)
 								{
-									self iprint ( "* " + local.weaponname + " " + local.left + " left" ) 
+									self iprint ( "* " + local.weaponname + " " + local.left + game.weapons_strings[9][1] ) 
 									wait 1.5
 								}
 							}
@@ -164,8 +190,8 @@ get_weapontik local.weapon_one local.weapon_two:
 	}
 
 end ( local.weapon_one::local.weapon_two )
-
-get_weaponclass local.weapon:
+/*
+get_weaponcl/ss local.weapon:
 	
 	if(level.weaponsinfo == NIL)
 	{
@@ -180,6 +206,7 @@ get_weaponclass local.weapon:
 		}
 	}
 end
+*/
 
 weaponsinfoAA:
 
@@ -268,6 +295,7 @@ newgun:
 	//local.dmteam= self.dmteam
 	self primarydmweapon ""
 	self spectator
+	self stufftext "pushmenu SelectPrimaryWeapon"
 	//self join_team local.dmteam
 end
 

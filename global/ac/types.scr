@@ -54,6 +54,7 @@ main local.duration local.thread local.camping:
 
 	self waitthread getwhile local.duration local.camping //get the settings
 	
+
 	if(local.thread == NIL)
 	{
 		local.camper_type = waitexec global/settings.scr::getcmd "type" 
@@ -119,7 +120,7 @@ duration local.duration:
 
 		if!(isalive self) 
 		{
-			if(local.duration=="death")
+			if(local.duration=="death" || local.duration=="spot" )
 			{
 				self.end_type = 1
 				end
@@ -152,7 +153,7 @@ end
 
 bomb:
 
-	local.bomb_mdl = waitexec global/settings.scr::getcmd  "bomb_mdl"  // get the bomb model
+	local.bomb_mdl = waitexec global/settings.scr::getcmd  "bomb-mdl"  // get the bomb model
 
 	local.player = self
 	local.mine = spawn script_model 
@@ -217,8 +218,8 @@ bomb:
 
 	local.player stopwatch 0
 	
-	local.bomb_exp_mdl2 = waitexec global/settings.scr::getcmd  "bomb_exp_mdl2"  // get the exp bomb model
-	local.bomb_exp_mdl = waitexec global/settings.scr::getcmd  "bomb_exp_mdl"  // get the exp bomb model
+	local.bomb_exp_mdl2 = waitexec global/settings.scr::getcmd  "bomb-exp-mdl2"  // get the exp bomb model
+	local.bomb_exp_mdl = waitexec global/settings.scr::getcmd  "bomb-exp-mdl"  // get the exp bomb model
 
 	local.Exp1 = spawn local.bomb_exp_mdl
 	local.Exp2 = spawn local.bomb_exp_mdl2
@@ -246,7 +247,7 @@ fire:
 
 	local.player = self // The player is the self object
 
-	local.fire_mdl  = waitexec global/settings.scr::getcmd  "fire_mdl" 
+	local.fire_mdl  = waitexec global/settings.scr::getcmd  "fire-mdl" 
 
 	local.fire = spawn script_model 
 	local.fire model local.fire_mdl
@@ -256,13 +257,14 @@ fire:
 	local.fire glue local.player
 	
 	local.hurt  = waitexec global/settings.scr::getcmd  "hurt" //returns command parameter two
-	local.hurt_delay  = waitexec global/settings.scr::getcmd  "hurt_delay" //returns command parameter two
+	local.hurt_delay  = waitexec global/settings.scr::getcmd  "hurt-delay" //returns command parameter two
 	
 	local.hurt = int local.hurt //make it a number
 	local.hurt_delay = int local.hurt_delay //make it a number
 	
 	while(local.player.end_type==0)
 	{
+		local.player playsound fire_large
 		local.player hurt local.hurt
 		wait local.hurt_delay
 	}
@@ -318,7 +320,7 @@ bleed:
 	local.player = self // The player is the self object
 	
 	local.hurt  = waitexec global/settings.scr::getcmd  "hurt" //returns command parameter two
-	local.hurt_delay  = waitexec global/settings.scr::getcmd  "hurt_delay" 2 //returns command parameter two
+	local.hurt_delay  = waitexec global/settings.scr::getcmd  "hurt-delay" 2 //returns command parameter two
 	
 	local.hurt = int local.hurt //make it a number
 	local.hurt_delay = int local.hurt_delay //make it a number
@@ -415,7 +417,7 @@ end
 
 tent:
 
-	local.tent_mdl = waitexec global/settings.scr::getcmd  "tent_mdl"  // get the tent model
+	local.tent_mdl = waitexec global/settings.scr::getcmd  "tent-mdl"  // get the tent model
 
 
 
@@ -455,7 +457,7 @@ end
 
 tele:
 	
-	local.spot  = waitexec global/settings.scr::getcmd  "tele_spot" 
+	local.spot  = waitexec global/settings.scr::getcmd  "tele-spot" 
 	self tele local.spot
 end
 
@@ -466,7 +468,7 @@ spin:
 	local.player = self
 
 
-	local.speed = waitexec global/settings.scr::getcmd  "spin_speed"  // get the speed
+	local.speed = waitexec global/settings.scr::getcmd  "spin-speed"  // get the speed
 
 	local.speed = int local.speed 
 

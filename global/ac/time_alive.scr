@@ -1,9 +1,0 @@
-
-
-main:
-
-	if(level.run["time_alive"] =="1")
-	{
-		exec global/ac/spawn_detect.scr global/ac/time_alive_count.scr
-	}
-end

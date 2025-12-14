@@ -195,7 +195,7 @@ end
 
 music local.track:
 
-	local.players = waitexec global/settings.scr::getcmd "play_for"
+	local.players = waitexec global/settings.scr::getcmd "play-for"
 
 	local.track = ("playmp3 " + local.track )
 	while(level.run["music"] == "1")

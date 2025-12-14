@@ -15,9 +15,9 @@ main local.hva:
 		
 		if(self.dmteam != "spectator" && self.dmteam != local.team)
 		{
+			self usestuff
 			self unattachfromladder 
-			wait .5
-			self kill
+			//self kill
 		}
 	}
 end

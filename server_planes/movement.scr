@@ -52,11 +52,11 @@ main local.movement:
 	case "JUMP":
 		if(game.game == "AA")
 		{
-			self exec server_planes/parachute.scr::parachute
+			self exec server_planes/parachute.scr
 		}
 		else
 		{
-			self exec server_planes/parachute_sh.scr::parachute
+			self exec server_planes/parachute_sh.scr
 		}
 	break
 	}

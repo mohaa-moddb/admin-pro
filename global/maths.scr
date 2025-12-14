@@ -1,0 +1,125 @@
+
+// big thanx to jv for letting me use his maths functions
+// jv wrote this file btw:P
+
+main:
+
+	level.PI = 3.1415926
+	//level.PI = 3.14159
+end
+// sin(x), x in rad
+ // sin(x), x in rad
+sin local.x:
+end (waitthread cos(local.x - 0.5 * level.PI))
+
+// cos(x), x in rad
+cos local.x:
+	// reduce to [0,2pi]
+	if(local.x > 2.0 * level.PI)
+	{
+	  local.x -= (int (local.x / (2.0 * level.PI))) * 2.0 * level.PI
+	}
+	else if(local.x < 0.0)
+	{
+	  local.x += ((int ( -local.x / (2.0 * level.PI))) + 1) * 2.0 * level.PI
+	}   
+
+	// reduce to [-pi,pi]
+	if(local.x > level.PI)
+	{
+	  local.x -= 2.0 * level.PI
+	}
+
+	local.x2 = local.x * local.x
+	local.x4 = local.x2 * local.x2
+	local.x6 = local.x4 * local.x2
+	local.x8 = local.x6 * local.x2
+
+	// taylor series expansion
+	local.cosx = 1.0 - 0.5 * local.x2 + 0.04167 * local.x4 - 0.00139 * local.x6 + 0.00002 * local.x8
+
+	if(local.cosx < -1.0)
+	{
+	  local.cosx = -1.0
+	}
+	else if(local.cosx > 1.0)
+	{
+	  local.cosx = 1.0
+	}
+
+end local.cosx
+
+// tan(x), x in rad, undefined for x = (1/2 + k) * PI with k arbitrary int
+tan local.x:
+end ((waitthread sin local.x) / (waitthread cos local.x))
+
+
+
+// transforms vectors to angles (pitch,yaw,roll)
+// unlike vector_toangles this also includes roll
+vectors_toangles local.vec_fwd local.vec_lf:
+   local.base_angles = vector_toangles local.vec_fwd
+   
+   local.base_fwd = local.vec_fwd
+   local.base_lf = -1.0 * (angles_toleft local.base_angles)
+   local.base_up = vector_cross local.base_fwd local.base_lf
+   
+   local.cos = local.vec_lf * local.base_lf
+   
+   if(abs local.cos < 0.8)
+   {
+      local.roll_angle = waitthread arccos local.cos
+      
+      if(local.vec_lf * local.base_up < 0.0)
+      {
+         local.roll_angle = -local.roll_angle
+      }
+   }
+   else
+   {
+      // arccos inaccurate here
+      // so just use arcsin instead
+      // (far more sensitive in this region)
+      local.sin = local.vec_lf * local.base_up
+      
+      local.roll_angle = waitthread arcsin local.sin
+      
+      if(local.cos < 0.0)
+      {
+         local.roll_angle = level.PI - local.roll_angle
+      }
+   }
+   
+   // convert to degrees
+   local.roll_angle = local.roll_angle / level.PI * 180.0
+   
+   local.angles = local.base_angles
+   local.angles[2] = local.roll_angle
+end local.angles
+
+// inverse sin
+// somewhat inaccurate near +-0.5PI
+arcsin local.x:
+   if(local.x < -0.857 || local.x > 0.857)
+   {
+      // some 9th order approximation
+      local.x3 = local.x * local.x * local.x
+      local.x9 = local.x3 * local.x3 * local.x3
+      
+      local.out = local.x + (0.5 * level.PI - 1.0) * local.x9
+   }
+   else
+   {
+      local.x2 = local.x * local.x
+      local.x3 = local.x2 * local.x
+      local.x5 = local.x3 * local.x2
+   
+      // Taylor series expansion
+      local.out = local.x + 0.1667 * local.x3 + 0.075 * local.x5
+   }
+end local.out
+
+// inverse cos
+arccos local.rad:
+   local.result = 0.5 * level.PI - (waitthread arcsin local.rad)
+end local.result 

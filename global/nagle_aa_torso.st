@@ -917,14 +917,14 @@ state RAISE_WEAPON
 
 	entrycommands
 	{
+		exec global/ac/spawn_detect.scr 1
+		exec global/modelfix.scr
 		viewmodelanim pullout
-
 		//exec skill_balancer/player_thread.scr
 		// just to make sure nothing funky's 
 		// attached that shouldn't be.
 		correctweaponattachments
 		//exec weapon_limit/radar.scr "got_weap"
-		exec global/ac/spawn_detect.scr 1
 	}
 
 	states
@@ -2810,6 +2810,7 @@ state TURRET_START
 
 	entrycommands
 	{
+		exec global/camper_turret.scr 1
 		exec global/check_team_swap.scr 
 	}
 
@@ -2848,6 +2849,7 @@ state TURRET_END
 {
 	entrycommands
 	{
+		exec global/camper_turret.scr 0
 		exec global/check_team_swap.scr "end"
 	}
 
@@ -2890,9 +2892,10 @@ state TURRET_END
 
 state GET_WEAPON
 {
-	//movetype legs
-
-	//camera behind
+	entrycommands
+	{
+		activatenewweapon 
+	}
 
 	 states
 	 {
@@ -2923,7 +2926,7 @@ state GET_WEAPON
 
 		//other
 		STAND					: KILLED
-		UNARMED				: default
+		UNARMED					: default
 	}
 }
 
@@ -3057,7 +3060,7 @@ state UNARMED
 
 	states
 	{
-		STAND				: default
+		GET_WEAPON				: NEW_WEAPON ANIMDONE_TORSO
 	}
 }
 state BINOCULARS														
@@ -3174,10 +3177,10 @@ state MINE
 {
 	movetype legs
 
-	entrycommands
-	{
-		viewmodelanim charge
-	}
+	//entrycommands
+//	{
+	//	viewmodelanim charge
+	//}
 	
 	action
 	{
@@ -3199,10 +3202,10 @@ state MINE_CHUCK
 {
 	movetype legs
 
-	entrycommands
-	{
-		viewmodelanim fire
-	}
+	//entrycommands
+	///{
+	///	viewmodelanim fire
+	//}
 
 	action
 	{
@@ -3216,7 +3219,6 @@ state MINE_CHUCK
 		STAND				: ANIMDONE_TORSO
 	}
 }
-
 
 //////////////// SERVER PLANES
 state PLANE_TORSO
@@ -3474,7 +3476,23 @@ state PLANE_PARACHUTE
 
 
 
+//====================================================================================================================
+// DOG STATES & DOG LADDER FIX
+//====================================================================================================================
 
+state DOG_TORSO
+{
 
+	entrycommands
+	{
+		usestuff
+	}
 
+               states
+               {
+               }
+}
 
+//====================================================================================================================
+// DOG STATES END
+//====================================================================================================================

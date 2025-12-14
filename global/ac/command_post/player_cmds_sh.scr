@@ -8,10 +8,12 @@ main local.words local.actual local.player:
 
 	switch(local.words[2])
 	{
-	case "addkills "
+	case "addkills"
+		local.actual = int local.actual
 		local.player addkills local.actual
 	break
-	case "takekills "
+	case "takekills"
+	local.actual = int local.actual
 		local.take = 0 - local.actual
 		local.player addkills local.take
 	break
