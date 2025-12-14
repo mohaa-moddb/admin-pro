@@ -1,0 +1,1682 @@
+/*
+================================================================================
+Rindogs_ThemedCommands_MAM_Addon for Medal Of Honor: 
+Version 1.0 (10/10/04)
+
+Copyright (c) 2003-2004 Ron Schacht
+email: mods@rindog.com
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is furnished
+to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+================================================================================
+*/
+///////////////////////////////////////////////////////////////////////////////
+main local.words local.actual local.player:
+
+	switch(local.words[2])
+	{
+	case "rinspin":
+		local.player thread Rinspin
+	break
+	case "ghost":
+		local.player thread Ghost
+	break
+	case "sparks":
+		local.player thread Sparks
+	break
+	case "runt":
+		local.player thread Runt local.words[2]
+	break
+	case "shortstack":
+		local.player thread Runt local.words[2]
+	break
+	case "snype":
+		local.player thread Snype
+	break
+	case "bigpoppa":
+		local.player thread Bigpoppa
+	break
+	case "twister":
+		local.player thread Twister
+	break
+	case "myst":
+		local.player thread Myst
+	break
+	case "wolfpack":
+		local.player thread Wolfpack
+	break
+	case "stonecold":
+		local.player thread Stonecold
+	break
+	case "flip":
+		local.player thread flip local.actual
+	break
+	case "inferno":
+		local.player thread Inferno
+	break
+	case "kickwarn":
+		local.player thread kickwarn
+	break
+	case "disarm":
+		local.player thread disarm
+	break
+	case "rindog":
+		local.player thread Rindog
+	break
+	case "jumpglitch":
+		local.player thread jumpglitch
+	break
+	case "track":
+		local.player thread track
+	break
+	case "storm":
+		local.player thread storm
+	break
+	case "yomama":
+		local.player thread yo_mama
+	break
+	case "sheriff":
+		local.player thread sheriff
+	break
+	case "fugitive":
+		local.player thread fugitive
+	break
+	case "rocketdud":
+		local.player thread rocket_dud
+	break
+	case "stackem":
+		local.player thread Stackem
+	break
+	case "crusher":
+		local.player thread Crusher
+	break
+	case "pigpen":
+		local.player thread Pigpen
+	break
+	default:
+		end
+	}
+end 1
+////////////////////////////****RINSPIN****////////////////////////////////////
+Rinspin:
+
+      // set player
+      local.player = self
+ 
+	if ((level.rinspining[local.player.entnum] == 0) || (level.rinspining[local.player.entnum] == NIL))
+	{
+		local.trig = spawn trigger_multiple
+		local.trig.origin = local.player.origin
+		local.trig wait .5
+		local.trig delay 0
+		local.trig.targetname = ("rinspin_trig_" + local.player.entnum)
+		local.trig setthread rinspin_setthread
+
+		local.obj = spawn script_origin
+		local.obj.origin = local.player.origin
+		local.obj.targetname = ("rinspin_scr_org_" + local.player.entnum)
+
+		local.trig bind local.obj
+		local.obj glue local.player 
+		level.rinspining[local.player.entnum] = 1
+		end 
+        }
+
+	if (level.rinspining[local.player.entnum] == 1)  
+        {	 
+		$("rinspin_trig_" + local.player.entnum) delete
+		$("rinspin_scr_org_" + local.player.entnum) delete
+		level.rinspining[local.player.entnum] = 0
+		end 
+        } 	
+end 
+
+rinspin_setthread: 
+
+	local.player = parm.other
+	if (level.rinspining[local.player.entnum])
+	{
+		local.player turn 200
+	}
+end 
+
+
+//////////////////////////// ****RINSPIN**** ////////////////////////////////////
+//////////////////////////// ****GHOST/STRIKER**** /////////////////////////////
+Ghost:
+	local.player = self
+
+	if ((level.ghosting[local.player.entnum] == 0) || (level.ghosting[local.player.entnum] == NIL))
+	{
+		local.trig = spawn trigger_multiple
+		local.trig.origin = local.player.origin
+		local.trig.damage = 10
+		local.trig wait .5
+		local.trig.targetname = ("ghost_trig_" + local.player.entnum)
+		local.trig setthread ghost_setthread
+
+		local.obj = spawn script_origin
+		local.obj.origin = local.player.origin
+		local.obj.targetname = ("ghost_scr_org_" + local.player.entnum)
+		local.trig bind local.obj
+		local.obj glue local.player 
+		level.ghosting[local.player.entnum] = 1
+		end 
+	}
+
+	if (level.ghosting[local.player.entnum] == 1)  
+	{	 
+		$("ghost_trig_" + local.player.entnum) delete
+		$("ghost_scr_org_" + local.player.entnum) delete
+		level.ghosting[local.player.entnum] = 0
+		end 
+	} 	
+end 
+
+ghost_setthread:
+	local.player = parm.other
+	local.player hurt 10
+	local.player playsound pistol_hit
+	wait .3
+
+	if ( local.player.normal_health <= 0 ) //health is at 0 
+	{ 
+		$("ghost_trig_" + local.player.entnum) delete
+		$("ghost_scr_org_" + local.player.entnum) delete
+		level.ghosting[local.player.entnum] = 0
+	} 	
+end 
+
+
+
+//////////////////////////// ****GHOST/STRIKER**** /////////////////////////////
+//////////////////////////// ****SPARKS**** ///////////////////////////////////
+Sparks:
+
+	local.player = self
+  
+	if ((level.sparking[local.player.entnum] == 0) || (level.sparking[local.player.entnum] == NIL))
+        {
+          local.trig = spawn trigger_hurt
+          local.trig.origin = local.player.origin
+          local.trig.damage = 3
+          local.trig wait 2
+          local.trig.targetname = ("sparks_trig_" + local.player.entnum)
+          local.trig setthread sparks_setthread
+
+          local.obj = spawn script_origin
+          local.obj.origin = local.player.origin
+          local.obj.targetname = ("sparks_scr_org_" + local.player.entnum)
+
+          local.effect1 = spawn "models/emitters/electrical_fire.tik"
+          local.effect1.origin = local.obj.origin + ( 0 0 78 )
+          local.effect1.targetname = ("sparks_effect1_" + local.player.entnum)
+
+          local.effect2 = spawn "models/emitters/linger_smoke.tik"
+          local.effect2.origin = local.obj.origin + ( 0 0 78 )
+          local.effect2.targetname = ("sparks_effect2_" + local.player.entnum)
+  
+          local.effect3 = spawn "models/emitters/electric_arc.tik"
+          local.effect3.origin = local.obj.origin + ( 0 0 78 )
+          local.effect3.targetname = ("sparks_effect3_" + local.player.entnum)
+
+          local.trig bind local.obj
+          local.effect1 bind local.obj
+          local.effect2 bind local.obj
+          local.effect3 bind local.obj
+
+          local.obj glue local.player 
+          level.sparking[local.player.entnum] = 1
+          local.player dmmessage 0 "I'M BEING ELECTRICUTED FOR BEING INCONSIDERATE AND I NEED TO APOLOGIZE!"
+          end 
+        }
+
+	if (level.sparking[local.player.entnum] == 1)  
+        {	 
+            $("sparks_trig_" + local.player.entnum) delete
+            $("sparks_scr_org_" + local.player.entnum) delete
+            $("sparks_effect1_" + local.player.entnum) delete
+            $("sparks_effect2_" + local.player.entnum) delete
+            $("sparks_effect3_" + local.player.entnum) delete
+            level.sparking[local.player.entnum] = 0
+            end 
+        } 	
+end 
+
+sparks_setthread:
+  local.player = parm.other
+  local.player playsound electricalswitch_down
+  wait .3
+  if ( local.player.normal_health <= 0 ) //health is at 0 
+    { 
+      $("sparks_trig_" + local.player.entnum) delete
+      $("sparks_scr_org_" + local.player.entnum) delete
+      $("sparks_effect1_" + local.player.entnum) delete
+      $("sparks_effect2_" + local.player.entnum) delete
+      $("sparks_effect3_" + local.player.entnum) delete
+      level.sparking[local.player.entnum] = 0
+    } 	
+end 
+
+
+//////////////////////////// ****SPARKS**** ///////////////////////////////////
+//////////////////////////// ****RUNT/SHORTSTACK**** /////////////////////////
+Runt local.args:
+      local.player = self
+      level.playerhealth[local.player.entnum] = local.player.health
+
+      if ((level.runting[local.player.entnum] == 0) || (level.runting[local.player.entnum] == NIL))
+        {
+          local.trig = spawn trigger_hurt
+          local.trig.origin = local.player.origin
+          local.trig.damage = 10
+          local.trig wait 5
+          local.trig.targetname = ("runt_trig_" + local.player.entnum)
+          local.trig setthread runt_setthread
+
+          local.obj = spawn script_origin
+          local.obj.origin = local.player.origin
+          local.obj.targetname = ("runt_scr_org_" + local.player.entnum)
+
+          local.trig bind local.obj
+          local.obj glue local.player 
+          local.player.scale = .5
+          level.runting[local.player.entnum] = 1
+          if ((local.args == "Runt") || (local.args == "runt"))
+            {
+	      local.player dmmessage 0 "I HAVE BEEN MADE A RUNT FOR BREAKING THE RULES AND I NEED TO APOLOGIZE!"
+	    }
+	    else
+	    {
+	      local.player dmmessage 0 "I HAVE BEEN MADE A SHORTSTACK  BECAUSE OF UNACCEPTABLE BEHAVIOR AND I NEED TO APOLOGIZE!"
+	    }
+          end 
+          }
+
+      if (level.runting[local.player.entnum] == 1)  
+	{	
+	  $("runt_trig_" + local.player.entnum) delete
+	  $("runt_scr_org_" + local.player.entnum) delete
+          level.runting[local.player.entnum] = 0
+	  local.player weaponcommand dual bulletcount 1
+	  local.player.scale = 1
+         end 
+	} 	
+end 
+
+runt_setthread:
+  local.player = parm.other
+  local.player playsound pistol_hit
+  local.player weaponcommand dual bulletcount 0
+  local.player iprint "*****YOU HAVE BEEN MADE A MIDGET BECAUSE OF YOUR IMMATURE BEHAVIOR!*****"
+  local.player.health = level.playerhealth[local.player.entnum]
+  wait .3
+  if ( local.player.health <= 0 ) //health is at 0 
+    { 
+      $("runt_trig_" + local.player.entnum) delete
+      $("runt_scr_org_" + local.player.entnum) delete
+      level.runting[local.player.entnum] = 0
+    } 	
+end 
+
+
+//////////////////////////// ****RUNT/SHORTSTACK**** /////////////////////////
+//////////////////////////// ****SNYPE**** //////////////////////////////////
+Snype:
+
+      local.player = self
+      local.player playsound kar98sniper_snd_fire1
+      local.player kill
+   //   local.player dmmessage 0 "I HAVE BEEN SNIPED FOR BEING A JERK AND NOw I'M BEING KICKED!"
+   // wait 3
+   // local.player stufftext disconnect
+   
+end 
+
+
+//////////////////////////// ****SNYPE**** //////////////////////////////////
+//////////////////////////// ****BIGPOPPA**** ///////////////////////////////
+Bigpoppa:
+
+      local.player = self
+      level.playerhealth[local.player.entnum] = local.player.health
+
+      if ((level.bigpoppaing[local.player.entnum] == 0) || (level.bigpoppaing[local.player.entnum] == NIL))
+        {
+          local.trig = spawn trigger_hurt
+          local.trig.origin = local.player.origin
+          local.trig.damage = 10
+          local.trig wait 5
+          local.trig.targetname = ("bigpoppa_trig_" + local.player.entnum)
+          local.trig setthread Bigpoppa_setthread
+
+          local.obj = spawn script_origin
+          local.obj.origin =  local.player.origin
+          local.obj.targetname = ("bigpoppa_scr_org_" + local.player.entnum)
+
+          local.trig bind local.obj
+          local.obj glue local.player 
+          local.player.scale = 2
+          level.bigpoppaing[local.player.entnum] = 1
+          local.player dmmessage 0 "I HAVE BEEN MADE A GIANT FOR BREAKING THE RULES AND I NEED TO APOLOGIZE!"
+          end 
+        }
+
+      if (level.bigpoppaing[local.player.entnum] == 1)  
+        {	
+	  local.player.scale = 1
+ 	  $("bigpoppa_trig_" + local.player.entnum) delete
+	  $("bigpoppa_scr_org_" + local.player.entnum) delete
+          level.bigpoppaing[local.player.entnum] = 0
+	  local.player weaponcommand dual bulletcount 1
+	  local.player.scale = 1
+          end 
+        } 	
+  
+end 
+
+Bigpoppa_setthread:
+  local.player = parm.other
+  local.player playsound pistol_hit
+  local.player weaponcommand dual bulletcount 0
+  local.player iprint "*****YOU HAVE BEEN MADE A GIANT BECAUSE OF YOUR IMMATURE BEHAVIOR!*****"
+  local.player.health = level.playerhealth[local.player.entnum]
+  wait .3
+  if ( local.player.normal_health <= 0 ) //health is at 0 
+    { 
+      $("bigpoppa_trig_" + local.player.entnum) delete
+      $("bigpoppa_scr_org_" + local.player.entnum) delete
+      level.bigpoppaing[local.player.entnum] = 0
+    } 	
+end 
+
+//////////////////////////// ****BIGPOPPA**** ///////////////////////////////
+//////////////////////////// ****TWISTER**** ///////////////////////////////
+Twister:
+
+      local.player = self
+  
+      if ((level.twistering[local.player.entnum] == 0) || (level.twistering[local.player.entnum] == NIL))
+        {
+          level.rang = 0
+          local.trig = spawn trigger_multiple
+          local.trig.origin = local.player.origin
+          local.trig wait .2
+          local.trig delay .2
+          local.trig.targetname = ("twister_trig_" + local.player.entnum)
+          local.trig setthread twister_setthread
+
+          local.obj = spawn script_origin
+          local.obj.origin = local.player.origin
+          local.obj.targetname = ("twister_scr_org_" + local.player.entnum)
+
+          local.trig bind local.obj
+          local.obj glue local.player 
+          level.twistering[local.player.entnum] = 1
+          local.player dmmessage 0 "I'M TWISTED FOR BREAKING THE RULES"
+          end 
+        }
+
+      if (level.twistering[local.player.entnum] == 1)  
+        {	
+          local.player.viewangles = ( 0 0 0)
+          $("twister_trig_" + local.player.entnum) delete
+          $("twister_scr_org_" + local.player.entnum) delete
+          level.twistering[local.player.entnum] = 0
+          end 
+        } 	
+end 
+
+twister_setthread:
+  local.player = parm.other
+  local.player playsound electricalswitch_down
+  local.player iprint "*****YOU HAVE BEEN TWISTED FOR BREAKING THE RULES!*****"
+  local.player.viewangles = local.player.viewangles + ( 0 0 level.rang)
+  level.rang = level.rang + .5
+  if (level.rang == 360) 
+    level.rang = 0
+end 
+
+//////////////////////////// ****TWISTER**** ///////////////////////////////
+//////////////////////////// ****MYST**** /////////////////////////////////
+Myst:
+
+      local.player = self
+  
+      if ((level.mysting[local.player.entnum] == 0) || (level.mysting[local.player.entnum] == NIL))
+        {
+          local.trig = spawn trigger_multiple
+          local.trig.origin = local.player.origin
+          local.trig.damage = 3
+          local.trig wait 2
+          local.trig.targetname = ("myst_trig_" + local.player.entnum)
+          local.trig setthread myst_setthread
+
+          local.obj = spawn script_origin
+          local.obj.origin = local.player.origin
+          local.obj.targetname = ("myst_scr_org_" + local.player.entnum)
+
+          local.effect1 = spawn "models/emitters/higgins_mushroom.tik"
+          local.effect1.origin = local.obj.origin + ( 0 -16 0 )
+          local.effect1.targetname = ("myst_effect1_" + local.player.entnum)
+
+          local.effect2 = spawn "models/emitters/higgins_mushroom.tik"
+          local.effect2.origin = local.obj.origin // + ( 16 16 0 )
+          local.effect2.targetname = ("myst_effect2_" + local.player.entnum)
+          local.effect2 bind local.obj
+
+          local.trig bind local.obj
+          local.effect1 bind local.obj
+          local.effect2 bind local.obj
+          local.obj glue local.player 
+          level.mysting[local.player.entnum] = 1
+          local.player dmmessage 0 "I'M BEING VAPORIZED ALIVE FOR BAD BEHAVIOR AND I NEED TO APOLOGIZE!"
+          end 
+        }
+
+      if (level.mysting[local.player.entnum] == 1)  
+	{	 
+	  $("myst_trig_" + local.player.entnum) delete
+	  $("myst_scr_org_" + local.player.entnum) delete
+	  $("myst_effect1_" + local.player.entnum) delete
+	  $("myst_effect2_" + local.player.entnum) delete
+          level.mysting[local.player.entnum] = 0
+          end 
+	} 	
+end 
+
+myst_setthread:
+  local.player = parm.other
+  local.player hurt 3
+  local.player playsound smokegrenade_air_loop
+  wait .3
+  if ( local.player.normal_health <= 0 ) //health is at 0 
+    { 
+      $("myst_trig_" + local.player.entnum) delete
+      $("myst_scr_org_" + local.player.entnum) delete
+      $("myst_effect1_" + local.player.entnum) delete
+      $("myst_effect2_" + local.player.entnum) delete
+      level.mysting[local.player.entnum] = 0
+    } 	
+end 
+
+
+//////////////////////////// ****MYST**** /////////////////////////////////
+//////////////////////////// ****WOLFPACK**** ////////////////////////////
+Wolfpack:
+
+      local.player = self
+  
+      if ((level.WolfPacking[local.player.entnum] == 0) || (level.WolfPacking[local.player.entnum] == NIL))
+        {
+         
+	  local.trig = spawn trigger_multiple ("WolfPack_trig_" + local.player.entnum)
+          local.trig.origin = local.player.origin
+	  local.trig setsize ( -40 -40 -40 ) ( 40 40 40 ) 
+	  local.trig.damage = 3
+          local.trig wait 2
+          local.trig setthread WolfPack_setthread
+
+          local.obj = spawn script_origin
+          local.obj.origin = local.player.origin
+          local.obj.targetname = ("WolfPack_scr_org_" + local.player.entnum)
+
+          local.effect1 = spawn "models/fx/dummy.tik"
+          local.effect1.origin = local.obj.origin + ( 0 0 78 )
+          local.effect1.targetname = ("WolfPack_effect1_" + local.player.entnum)
+
+          local.effect2 = spawn "models/fx/dummy.tik"
+          local.effect2.origin = local.obj.origin + ( 0 0 78 )
+          local.effect2.targetname = ("WolfPack_effect2_" + local.player.entnum)
+
+          local.effect3 = spawn "models/fx/dummy.tik"
+          local.effect3.origin = local.obj.origin + ( 0 0 78 )
+          local.effect3.targetname = ("WolfPack_effect3_" + local.player.entnum)
+ 
+          local.trig bind local.obj
+          local.effect1 bind local.obj
+          local.effect2 bind local.obj
+          local.effect3 bind local.obj
+          local.obj glue local.player 
+          level.WolfPacking[local.player.entnum] = 1
+          local.player dmmessage 0 "I'M BEING MAULED BY THE SPIRIT OF THE WOLF FOR BEING FOR BEING A BAD DOG!"
+          end 
+        }
+
+      if (level.WolfPacking[local.player.entnum] == 1)  
+	{
+          local.player stoploopsound
+          $("WolfPack_trig_" + local.player.entnum) stoploopsound
+          $("WolfPack_scr_org_" + local.player.entnum) stoploopsound
+          $("WolfPack_effect1_" + local.player.entnum) stoploopsound
+          $("WolfPack_effect2_" + local.player.entnum) stoploopsound
+          $("WolfPack_effect3_" + local.player.entnum) stoploopsound
+          $("WolfPack_trig_" + local.player.entnum) delete
+          $("WolfPack_scr_org_" + local.player.entnum) delete
+          $("WolfPack_effect1_" + local.player.entnum) delete
+          $("WolfPack_effect2_" + local.player.entnum) delete
+          $("WolfPack_effect3_" + local.player.entnum) delete
+          level.WolfPacking[local.player.entnum] = 0
+          end 
+        } 	
+end 
+
+WolfPack_setthread:
+
+  local.player = parm.other
+
+  local.player hurt 3
+  local.player loopsound dog_bite 7
+  wait .3
+  $("WolfPack_trig_" + local.player.entnum) loopsound dog_bite 5
+  wait .3
+  $("WolfPack_scr_org_" + local.player.entnum) loopsound dog_bite 5
+  wait .3
+  $("WolfPack_effect1_" + local.player.entnum) loopsound dog_bark 5
+  wait .3
+  $("WolfPack_effect2_" + local.player.entnum) loopsound dog_bark 7
+  wait .3
+  $("WolfPack_effect3_" + local.player.entnum) loopsound dog_bite 5
+  wait .3
+  if ( local.player.normal_health <= 0 ) //health is at 0 
+    { 
+      local.player stoploopsound
+      $("WolfPack_trig_" + local.player.entnum) stoploopsound
+      $("WolfPack_scr_org_" + local.player.entnum) stoploopsound
+      $("WolfPack_effect1_" + local.player.entnum) stoploopsound
+      $("WolfPack_effect2_" + local.player.entnum) stoploopsound
+      $("WolfPack_effect3_" + local.player.entnum) stoploopsound
+      $("WolfPack_trig_" + local.player.entnum) delete
+      $("WolfPack_scr_org_" + local.player.entnum) delete
+      $("WolfPack_effect1_" + local.player.entnum) delete
+      $("WolfPack_effect2_" + local.player.entnum) delete
+      $("WolfPack_effect3_" + local.player.entnum) delete
+      level.WolfPacking[local.player.entnum] = 0
+    } 	
+end 
+
+
+//////////////////////////// ****WOLFPACK**** ////////////////////////////
+
+//////////////////////////// ****STONECOLD/GREYSTONE**** ///////////////
+Stonecold:
+      local.player = self
+  
+      if ((level.stonecolding[local.player.entnum] == 0) || (level.stonecolding[local.player.entnum] == NIL))
+        {
+          local.trig = spawn trigger_multiple
+          local.trig.origin = local.player.origin
+          local.trig wait 2
+          local.trig.targetname = ("stonecold_trig_" + local.player.entnum)
+          local.trig setthread stonecold_setthread
+
+          local.obj = spawn script_origin
+          local.obj.origin = local.player.origin
+          local.obj.targetname = ("stonecold_scr_org_" + local.player.entnum)
+
+          if ((local.args[1] == "Stonecold") || (local.args[1] == "stonecold"))
+            {
+              local.effect1 = spawn script_model
+              local.effect1.model = "models/static/rock_winter_large.tik"
+              local.effect1.origin = local.player.origin
+              local.effect1.targetname = ("stonecold_effect1_" + local.player.entnum)
+              local.effect1 solid
+              local.effect1 show
+            }
+            else
+            {
+              local.effect1 = spawn script_model
+              local.effect1.model =  "models/static/rock_large.tik"
+              local.effect1.origin = local.player.origin
+              local.effect1.targetname = ("stonecold_effect1_" + local.player.entnum)
+              local.effect1 solid
+              local.effect1 show
+            }
+          local.trig bind local.obj
+          local.obj glue local.player 
+          level.stonecolding[local.player.entnum] = 1
+          local.player dmmessage 0 "I'M A ROCKHEAD FOR BREAKING THE RULES"
+          end 
+        }
+
+      if (level.stonecolding[local.player.entnum] == 1)  
+        {	 
+          $("stonecold_trig_" + local.player.entnum) delete
+          $("stonecold_scr_org_" + local.player.entnum) delete
+          $("stonecold_effect1_" + local.player.entnum) delete
+          level.stonecolding[local.player.entnum] = 0
+          local.player weaponcommand dual bulletcount 1
+          end 
+        } 	
+end 
+
+stonecold_setthread:
+  local.player = parm.other
+  local.player playsound snd_landing_stone1
+  local.player weaponcommand dual bulletcount 0
+  $("stonecold_effect1_" + local.player.entnum).origin = local.player.origin
+  local.player iprint "*****YOU HAVE BEEN TURNED TO STONE FOR BEING A PEBBLE BRAIN!*****"
+end 
+
+//////////////////////////// ****STONECOLD/GREYSTONE**** ///////////////
+//////////////////////////// ****FLIP**** /////////////////////////////
+flip local.args:
+
+      local.player = self
+      local.args = int local.args
+
+      if ((level.fliping[local.player.entnum] == 0) || (level.fliping[local.player.entnum] == NIL))
+        {
+          local.trig = spawn trigger_multiple
+          local.trig.origin = local.player.origin
+          local.trig wait 10
+          local.trig.targetname = ("flip_trig_" + local.player.entnum)
+          local.trig setthread flip_setthread
+
+          local.obj = spawn script_origin
+          local.obj.origin = local.player.origin
+          local.obj.targetname = ("flip_scr_org_" + local.player.entnum)
+
+          local.trig bind local.obj
+          local.obj glue local.player 
+
+          level.fliping[local.player.entnum] = 1
+
+          level.flipangle[local.player.entnum] = local.args
+          local.player.viewangles = ( local.player.viewangles[0] local.player.viewangles[1] level.flipangle[local.player.entnum] )
+          local.player dmmessage 0 "I'M FLIPPED OUT FOR DISOBEYING AN ADMIN"
+          end 
+        }
+
+      if (level.fliping[local.player.entnum] == 1)  
+        {	 
+          $("flip_trig_" + local.player.entnum) delete
+          $("flip_scr_org_" + local.player.entnum) delete
+          level.fliping[local.player.entnum] = 0
+          local.player.viewangles = ( local.player.viewangles[0] local.player.viewangles[1] 0 )
+          end 
+        } 	
+end 
+
+flip_setthread:
+  local.player = parm.other
+  local.player iprint "*****YOU HAVE BEEN FLIPPED FOR DISOBEYING THE RULES!*****"
+  local.player.viewangles = ( local.player.viewangles[0] local.player.viewangles[1] level.flipangle[local.player.entnum] )
+end 
+
+
+
+//////////////////////////// ****FLIP**** /////////////////////////////
+//////////////////////////// ****INFERNO**** /////////////////////////
+Inferno:
+      local.player = self
+  
+      if ((level.Infernoing[local.player.entnum] == 0) || (level.Infernoing[local.player.entnum] == NIL))
+        {
+          local.trig = spawn trigger_multiple
+          local.trig.origin = local.player.origin
+          local.trig.damage = 3
+          local.trig wait 2
+          local.trig.targetname = ("Inferno_trig_" + local.player.entnum)
+          local.trig setthread Inferno_setthread
+
+          local.obj = spawn script_origin
+          local.obj.origin = local.player.origin
+          local.obj.targetname = ("Inferno_scr_org_" + local.player.entnum)
+
+          local.effect1 = spawn "models/emitters/explosion_conflagration.tik"
+          local.effect1.origin = local.obj.origin + ( 0 0 78 )
+          local.effect1.targetname = ("Inferno_effect1_" + local.player.entnum)
+
+          local.effect2 = spawn "models/emitters/fireandsmoke.tik"
+          local.effect2.origin = local.obj.origin // + ( 0 0 78 )
+          local.effect2.targetname = ("Inferno_effect2_" + local.player.entnum)
+
+          local.trig bind local.obj
+          local.effect1 bind local.obj
+          local.effect2 bind local.obj
+          local.obj glue local.player 
+          level.Infernoing[local.player.entnum] = 1
+          local.player dmmessage 0 "I'M BEING BURNED ALIVE FOR ANNOYING BEHAVIOR AND I NEED TO APOLOGIZE!"
+          end 
+        }
+      if (level.Infernoing[local.player.entnum] == 1)  
+        {	 
+          $("Inferno_trig_" + local.player.entnum) delete
+          $("Inferno_scr_org_" + local.player.entnum) delete
+          $("Inferno_effect1_" + local.player.entnum) delete
+          $("Inferno_effect2_" + local.player.entnum) delete
+          level.Infernoing[local.player.entnum] = 0
+          end 
+        } 	
+end
+
+Inferno_setthread:
+  local.player = parm.other
+  local.player playsound fire_large
+  local.player hurt 3
+  wait .3
+  if ( local.player.normal_health <= 0 ) //health is at 0 
+    { 
+      $("Inferno_trig_" + local.player.entnum) delete
+      $("Inferno_scr_org_" + local.player.entnum) delete
+      $("Inferno_effect1_" + local.player.entnum) delete
+      $("Inferno_effect2_" + local.player.entnum) delete
+      level.Infernoing[local.player.entnum] = 0
+    } 	
+end 
+
+
+//////////////////////////// ****INFERNO**** /////////////////////////
+//////////////////////////// ****kickwarn**** ///////////////////////
+kickwarn:
+      local.player = self
+      local.tempstr = "set ui_kickwarn YOU ARE ABOUT TO BE KICKED/BANNED UNLESS YOU START OBEYING THE RULES!"
+      local.player stufftext local.tempstr
+      local.tempstr = "dialog 0 ui_kickwarn say /q/q 640 480"
+      local.player stufftext local.tempstr // dialog "WARNING ui_kickwarn respawn 500 100"
+end 
+//////////////////////////// ****kickwarn**** ///////////////////////
+//////////////////////////// ****disarm**** ////////////////////////
+disarm:
+      local.player = self
+  
+      if ((level.disarming[local.player.entnum] == 0) || (level.disarming[local.player.entnum] == NIL))
+        {
+          local.trig = spawn trigger_multiple
+          local.trig.origin = local.player.origin
+          local.trig wait 2
+          local.trig.targetname = ("disarm_trig_" + local.player.entnum)
+          local.trig setthread disarm_setthread
+
+          local.obj = spawn script_origin
+          local.obj.origin = local.player.origin
+          local.obj.targetname = ("disarm_scr_org_" + local.player.entnum)
+
+          local.trig bind local.obj
+          local.obj glue local.player 
+          local.player takeall
+          level.disarming[local.player.entnum] = 1
+          local.player dmmessage 0 "I'M HELPLESS"
+          end 
+        }
+
+      if (level.disarming[local.player.entnum] == 1)  
+        {	 
+          $("disarm_trig_" + local.player.entnum) delete
+          $("disarm_scr_org_" + local.player.entnum) delete
+          level.disarming[local.player.entnum] = 0
+          end 
+        } 	
+end 
+
+disarm_setthread:
+  local.player = parm.other
+  local.player takeall
+end 
+
+//////////////////////////// ****disarm**** ////////////////////////
+////////////////////////////RINDOG/OTD///////////////////////////
+Rindog:
+      local.player = self
+  
+      if ((level.Rindoging[local.player.entnum] == 0) || (level.Rindoging[local.player.entnum] == NIL))
+        {
+          local.trig = spawn trigger_multiple
+          local.trig.origin = local.player.origin
+          local.trig wait 5
+          local.trig delay 5
+          local.trig.targetname = ("Rindog_trig_" + local.player.entnum)
+          local.trig setthread rindog_setthread
+
+          local.obj = spawn script_origin
+          local.obj.origin = local.player.origin
+          local.obj.targetname = ("Rindog_scr_org_" + local.player.entnum)
+
+          local.trig bind local.obj
+          local.obj glue local.player 
+
+
+          cache models/animal/german_shepherd.tik
+          local.effect1 = spawn "models/animal/german_shepherd.tik"
+          local.effect1.origin = local.player.origin + local.player.forwardvector * 96  + ( 0 0 32 )
+          local.effect1.angle = (local.player.angle + 180)
+          local.effect1.targetname = ("Rindog_effect1_" + local.player.entnum)
+          local.effect1.health = 10000
+          local.effect1.noticescale = 5
+          local.effect1.fov = 359
+          local.effect1.hearing = 10000
+          local.effect1.accuracy = 10000
+          local.effect1.sight = 10000
+          local.effect1.enableEnemy = 1
+          local.effect1.painhandler = anim/dog_pain.scr
+          local.effect1.deathhandler = anim/dog_killed.scr
+        //  local.effect1 safesolid
+
+          local.player iprint "********* Here comes the Rindog *********"
+          local.effect1 thread rindog_attack local.player
+          level.Rindoging[local.player.entnum] = 1
+          local.player dmmessage 0 "WHO LET OUT THE DOG?  I'M BEING ATTACKED BY A DOG FOR BREAKING THE RULES!"
+          end 
+        }
+
+
+      if (level.Rindoging[local.player.entnum] == 1)  
+        {	 
+          $("Rindog_trig_" + local.player.entnum) delete
+          $("Rindog_scr_org_" + local.player.entnum) delete
+          $("Rindog_effect1_" + local.player.entnum) delete
+          local.player dmmessage 0 "The dog is gone!"
+          level.Rindoging[local.player.entnum] = 0
+         end 
+        } 	
+end 
+
+rindog_attack local.player:
+  while (isalive self)		
+    {
+         if (self istouching local.player)
+	    {
+              self setmotionanim dog_bite_leg
+	      local.player hurt 5 
+	      self heal 1
+	      self waittill flaggedanimdone
+	    }
+	    else
+	    {
+               //chase enemy
+	      self setmotionanim dog_run
+              self.position = local.player.origin
+	      self heal 1
+	      self waittill flaggedanimdone
+	   }
+      wait .1
+    }
+end 
+
+rindog_setthread:
+  local.player = parm.other
+  $("Rindog_effect1_" + local.player.entnum).origin = local.player.origin + local.player.forwardvector * 96  + ( 0 0 32 )
+  $("Rindog_effect1_" + local.player.entnum).angle = (local.player.angle + 180)
+  local.player iprint "********* You know he ain't gonna die *********"
+  local.player iprint "********* Yeaaaaaaa........the Rindog *********"
+end 
+
+////////////////////////////RINDOG/OTD///////////////////////////
+//////////////////////////// ****jumpglitch**** ////////////////////////////////////
+jumpglitch:
+
+      local.player = self
+      local.player.origin = local.player.origin + ( 0 0 32)
+  
+end 
+//////////////////////////// ****jumpglitch**** ////////////////////////////////////
+//////////////////////////// ****track**** ////////////////////////
+
+
+track:
+      local.player = self
+  
+      if ((level.tracking[local.player.entnum] == 0) || (level.tracking[local.player.entnum] == NIL))
+        {
+          local.trig = spawn trigger_multiple
+          local.trig.origin = local.player.origin
+          local.trig wait 1
+          local.trig delay 1
+          local.trig.targetname = ("track_trig_" + local.player.entnum)
+          local.trig setthread track_setthread
+
+          local.obj = spawn script_origin
+          local.obj.origin = local.player.origin
+          local.obj.targetname = ("track_scr_org_" + local.player.entnum)
+
+          local.trig bind local.obj
+          local.obj glue local.player 
+          level.tracking[local.player.entnum] = 1
+          end 
+        }
+
+      if (level.tracking[local.player.entnum] == 1)  
+        {	 
+          $("track_trig_" + local.player.entnum) delete
+          $("track_scr_org_" + local.player.entnum) delete
+          level.tracking[local.player.entnum] = 0
+          end 
+        } 	
+end 
+
+track_setthread:
+  local.player = parm.other
+  local.tempstr = string(int(local.player.origin[0])) + " " 
+  local.tempstr = local.tempstr + string(int(local.player.origin[1])) + " "
+  local.tempstr = local.tempstr + string(int(local.player.origin[2])) + " "
+  local.tempstr = local.tempstr + string(int(local.player.viewangles[1]))
+  local.player iprint local.tempstr
+end 
+
+
+//////////////////////////// ****track**** ////////////////////////
+//////////////////////////// ****storm**** ////////////////////////
+storm:
+       local.player = self
+  
+      if ((level.storming[local.player.entnum] == 0) || (level.storming[local.player.entnum] == NIL))
+        {
+          local.trig = spawn trigger_multiple
+          local.trig.origin = local.player.origin
+          local.trig wait 2
+          local.trig delay 0
+          local.trig.targetname = ("storm_trig_" + local.player.entnum)
+          local.trig setthread storm_setthread
+
+          local.obj = spawn script_origin
+          local.obj.origin = local.player.origin
+          local.obj.targetname = ("storm_scr_org_" + local.player.entnum)
+
+          local.effect1 = spawn "fx/dummy.tik"
+          local.effect1.origin = local.obj.origin + ( 0 0 150 )
+          local.effect1.targetname = ("storm_effect1_" + local.player.entnum)
+
+          local.trig bind local.obj
+          local.effect1 bind local.obj
+          local.obj glue local.player 
+          level.storming[local.player.entnum] = 1
+          local.player loopsound rain_ext
+          local.effect1 loopsound rain_ext
+
+          level.beam = spawn func_beam
+          level.beam.origin = local.player.origin
+          level.beam.angles = ( -90 0 0 )
+          level.beam.targetname = ("storm_beam_" + local.player.entnum)
+          level.beam scale 1.5
+          level.beam minoffset 30
+          level.beam maxoffset 90
+          level.beam color ( 0.75 0.75 1)
+          level.beam numsegments 5
+
+       //   $world farclipoverride -1
+
+          level.rin_rain = spawn script_object "classname" "func_rain"
+          level.rin_rain.model = "fx/dummy.tik"
+          level.rin_rain.origin = local.player.origin + (0 0 150)
+          level.rin_rain setsize ( -32 -32 0 ) ( 32 32 64)
+          level.rin_rain notsolid
+          level.rin_rain show
+
+          level.rinsave_rain_shader = level.rain_shader
+          level.rinsave_rain_numshaders = level.rain_numshaders
+          level.rinsave_rain_width = level.rain_width
+          level.rinsave_rain_min_dist = level.rain_min_dist
+          level.rinsave_rain_density = level.rain_density
+	  level.rinsave_rain_speed = level.rain_speed
+	  level.rinsave_rain_speed_vary = level.rain_speed_vary
+	  level.rinsave_rain_length = level.rain_length
+	  level.rinsave_rain_slant = level.rain_slant
+
+          level.rain_shader = "textures/rain"
+          level.rain_numshaders = 0
+          level.rain_width = "0.4"
+          level.rain_min_dist = 64
+          level.rain_density = 20
+       //   level.startedrainsound2 = 1
+	  level.rain_speed = "256"
+	  level.rain_speed_vary = "16"
+	  level.rain_length = "2"
+	  level.rain_slant = "30"
+          println rinraintest
+
+          end 
+        }
+
+      if (level.storming[local.player.entnum] == 1)  
+        {
+          level.rain_shader = level.rinsave_rain_shader 
+          level.rain_numshaders = level.rinsave_rain_numshaders
+          level.rain_width = level.rinsave_rain_width
+          level.rain_min_dist = level.rinsave_rain_min_dist
+          level.rain_density = level.rinsave_rain_density
+	  level.rain_speed = level.rinsave_rain_speed
+	  level.rain_speed_vary = level.rinsave_rain_speed_vary
+	  level.rain_length = level.rinsave_rain_length
+	  level.rain_slant = level.rinsave_rain_slant
+	 
+          $("storm_trig_" + local.player.entnum) delete
+          $("storm_scr_org_" + local.player.entnum) delete
+          $("storm_beam_" + local.player.entnum) delete
+          $("storm_effect1_" + local.player.entnum) delete
+          level.rin_rain delete
+          local.player stoploopsound
+          level.storming[local.player.entnum] = 0
+          end 
+        } 	
+end 
+
+storm_setthread:
+  local.player = parm.other
+  level.rin_rain.origin = local.player.origin + (0 0 150)
+  $("storm_beam_" + local.player.entnum).origin = local.player.origin
+  $("storm_beam_" + local.player.entnum) activate
+  local.effect2 = spawn "models/emitters/electric_arc.tik"
+  local.effect2.origin = local.player.origin + ( 0 0 78 )
+  local.effect2.targetname = ("storm_effect2_" + local.player.entnum)
+  if (level.storming[local.player.entnum] == 1)
+    {
+      local.player hurt 5
+    }
+   
+  wait .001
+  $("storm_beam_" + local.player.entnum) deactivate
+  wait 1
+  local.player playsound thunder
+  $("storm_effect2_" + local.player.entnum) delete
+
+end 
+//////////////////////////// ****storm**** ////////////////////////
+//////////////////////////// ****yo_mama**** ////////////////////////
+
+
+yo_mama:
+      local.player = self
+  
+      if ((level.yo_mamaing[local.player.entnum] == 0) || (level.yo_mamaing[local.player.entnum] == NIL))
+        {
+          local.trig = spawn trigger_multiple
+          local.trig.origin = local.player.origin
+          local.trig wait .01
+          local.trig delay .01
+          local.trig.targetname = ("yo_mama_trig_" + local.player.entnum)
+          local.trig setthread yo_mama_setthread
+
+          local.trig2 = spawn trigger_multiple
+          local.trig2.origin = local.player.origin
+          local.trig2 wait 4
+          local.trig2 delay 4
+          local.trig2.targetname = ("yo_mama_trig2_" + local.player.entnum)
+          local.trig2 setthread yo_mama_setthread2
+
+          local.obj = spawn script_origin
+          local.obj.origin = local.player.origin
+          local.obj.targetname = ("yo_mama_scr_org_" + local.player.entnum)
+
+          local.neworg = vector_add local.player.origin ( 0 0 45)
+          local.anglestoforward = angles_toforward local.player.viewangles
+          local.vectoradd = local.neworg + local.anglestoforward * 72	
+
+          local.effect1 = spawn script_model "model" "models/static/flowerpainting.tik"
+          local.effect1.origin = local.vectoradd //local.obj.origin + ( 0 0 78 )
+          local.effect1.angles = local.player.viewangles// + ( 0 180 0 )
+          local.effect1.targetname = ("yo_mama_effect1_" + local.player.entnum)
+          local.effect1 notsolid
+          local.effect1.scale = 2
+
+          local.effect2 = spawn script_model "model" "models/static/flowerpainting.tik"
+          local.effect2.origin =  local.vectoradd //local.obj.origin // + ( 0 0 78 )
+          local.effect2.targetname = ("yo_mama_effect2_" + local.player.entnum)
+          local.effect2.angles = ((local.player.viewangles[0] * -1) (local.player.viewangles[1] + 180) (local.player.viewangles[2] * -1))
+          local.effect2 notsolid
+          local.effect2.scale = 2
+
+          local.trig bind local.obj
+          local.trig2 bind local.obj
+          local.obj glue local.player 
+          level.yo_mamaing[local.player.entnum] = 1
+          local.player dmmessage 0 "I'M BEING KILLED WITH KINDNESS FOR BEING UNKIND"
+          end 
+        }
+
+      if (level.yo_mamaing[local.player.entnum] == 1)  
+        {	 
+          local.player dmmessage 0 "YOUR MAMA HAS BEEN NOTIFIED OF YOUR RUDE BEHAVIOR"
+          $("yo_mama_trig_" + local.player.entnum) delete
+          $("yo_mama_trig2_" + local.player.entnum) delete
+          $("yo_mama_scr_org_" + local.player.entnum) delete
+          $("yo_mama_effect1_" + local.player.entnum) delete
+          $("yo_mama_effect2_" + local.player.entnum) delete
+          level.yo_mamaing[local.player.entnum] = 0
+          end 
+        } 	
+    
+end 
+
+yo_mama_setthread:
+  local.player = parm.other
+  local.player forcelegsstate STAND
+  if (local.player.dmteam == spectator)
+    {
+      $("yo_mama_effect1_" + local.player.entnum) hide
+      $("yo_mama_effect2_" + local.player.entnum) hide
+    }
+    else
+    {
+      $("yo_mama_effect1_" + local.player.entnum) show
+      $("yo_mama_effect2_" + local.player.entnum) show
+    } 
+
+  local.neworg = vector_add local.player.origin ( 0 0 45)
+  local.anglestoforward = angles_toforward local.player.viewangles
+  local.vectoradd = local.neworg + local.anglestoforward * 72	
+  $("yo_mama_effect1_" + local.player.entnum).origin = local.vectoradd
+  $("yo_mama_effect1_" + local.player.entnum).angles = local.player.viewangles //+ ( 0 180 0 )
+
+  $("yo_mama_effect2_" + local.player.entnum).origin = local.vectoradd
+  $("yo_mama_effect2_" + local.player.entnum).angles = ((local.player.viewangles[0] * -1) (local.player.viewangles[1] + 180) (local.player.viewangles[2] * -1))
+  local.player iprint "Roses are red"
+  local.player iprint "Violets are blue"
+  local.player iprint "You're making it hard"
+  local.player iprint "To be nice to you"
+  local.player iprint "(Please Obey the Rules)"
+end 
+
+yo_mama_setthread2:
+  local.player = parm.other
+  local.player hurt 1
+end 
+
+//////////////////////////// ****yo_mama**** ////////////////////////
+//////////////////////////// ****sheriff**** ////////////////////////
+sheriff:
+      local.player = self
+      if (local.player.dmteam == "spectator")
+        {
+          local.player iprint "You can not be in spectator mode to turn this command on or off!"
+          end 
+        }
+      if ((level.sheriffing[local.player.entnum] == 0) || (level.sheriffing[local.player.entnum] == NIL))
+        {
+          //$player[2] dog
+          //$player[2] tele 1 2458 250
+          //$player[2].viewangles = ( -20 -90 0)
+          //$player[2] holster
+          if (local.player.dmteam == "axis")
+            {
+              local.effect1 = spawn animate model models/vehicles/stuka_fly.tik
+              local.effect1.origin = local.player.origin  + ( 0 0 20 )
+            }
+            else
+            {
+              local.effect1 = spawn animate model  "models/vehicles/p47fly.tik"
+              local.effect1.origin = local.player.origin - local.player.forwardvector * 20  + ( 0 0 20 )
+            }
+          local.effect1.angles = local.player.viewangles 
+          local.effect1.targetname = ("sheriff_effect1_" + local.player.entnum)
+          local.effect1 solid
+
+          local.effect2 = spawn models/statweapons/mg42_gun.tik
+          local.effect2.origin = local.player.origin + local.player.leftvector * 100 + ( 0 0 85 )
+          local.effect2.angles = local.player.viewangles + ( 0 -3 0 )
+          local.effect2.targetname = ("sheriff_effect2_" + local.player.entnum)
+          local.effect2 bulletdamage .001
+          local.effect2.throughwood = 1000
+          local.effect2.throughmetal = 1000
+          local.effect2 notsolid
+          local.effect2 hide
+
+          local.effect3 = spawn models/statweapons/mg42_gun.tik
+          local.effect3.origin = local.player.origin - local.player.leftvector * 100 + ( 0 0 85 ) 
+          local.effect3.angles = local.player.viewangles + ( 0 3 0 )
+          local.effect3.targetname = ("sheriff_effect3_" + local.player.entnum)
+          local.effect3 bulletdamage .001
+          local.effect3.throughwood = 1000
+          local.effect3.throughmetal = 1000
+          local.effect3 notsolid
+          local.effect3 hide
+          cache "models/statweapons/mg42_gun.tik"
+          level.sheriffing[local.player.entnum] = 1
+          level.start_sheriff_pos[local.player.entnum] = local.player.origin
+          local.player noclip
+          local.player hide
+          local.player thread sheriff_setthread
+          end 
+        }
+      if (level.sheriffing[local.player.entnum] == 1)  
+        {	 
+          // local.player stopsound plane
+          $("sheriff_effect1_" + local.player.entnum) delete
+          $("sheriff_effect2_" + local.player.entnum) delete
+          $("sheriff_effect3_" + local.player.entnum) delete
+          local.player noclip 0
+          local.player show
+          local.player.origin = level.start_sheriff_pos[local.player.entnum]
+          level.sheriffing[local.player.entnum] = 0
+          end 
+        } 	
+    
+end 
+
+sheriff_setthread:
+  while ($("sheriff_effect1_" + self.entnum) != NULL)
+    {
+      if ($("sheriff_effect1_" + self.entnum) == NULL)
+       {
+         end 
+       }
+      if (self.dmteam == "axis") 
+        {
+          $("sheriff_effect1_" + self.entnum).origin = self.origin  + ( 0 0 20 )
+        }
+      if (self.dmteam == "allies")
+        {
+          $("sheriff_effect1_" + self.entnum).origin = self.origin - self.forwardvector * 30  + ( 0 0 20 )
+        }
+      if (self.dmteam == "spectator")
+        {
+          $("sheriff_effect1_" + self.entnum) delete
+          $("sheriff_effect2_" + self.entnum) delete
+          $("sheriff_effect3_" + self.entnum) delete
+          level.sheriffing[self.entnum] = 0
+          self noclip
+          end 
+        }
+
+      $("sheriff_effect1_" + self.entnum).angles = self.viewangles
+      $("sheriff_effect2_" + self.entnum).origin = self.origin + self.leftvector * 100 + ( 0 0 85 )
+      $("sheriff_effect2_" + self.entnum).angles = self.viewangles  + ( 0 -3 0 )
+      $("sheriff_effect3_" + self.entnum).origin = self.origin - self.leftvector * 100 + ( 0 0 85 )
+      $("sheriff_effect3_" + self.entnum).angles = self.viewangles + ( 0 3 0 )
+
+      if (self.useheld ==1)
+        {  
+          local.targ = trace self.origin (self.origin + ( 0 0 -10000))
+          self thread bombdrop local.targ
+          wait .1
+        }
+
+      if (self.fireheld ==1)
+        {
+          $("sheriff_effect2_" + self.entnum) shoot
+          $("sheriff_effect3_" + self.entnum) shoot
+          self playsound mg42_gun_snd_fire1
+          wait .1
+        }
+        else
+        {
+          self stopsound mg42_gun_snd_fire1
+        }
+      wait .001
+    }
+end 
+
+bombdrop local.spot:
+  local.bomb = spawn script_model "targetname" "bomb"
+  local.bomb.origin = self.origin + ( 0 0 120 )
+  local.bomb model "ammo/us_bomb.tik"
+  local.bomb.angles = ( 0 (self.viewangles[1] + 90) 0 )
+  local.bomb notsolid
+  local.bomb playsound drop_bomb
+  local.bomb speed 1800
+  local.bomb moveto local.spot
+  local.bomb waitmove
+  exec global/model.scr local.spot "models/emitters/explosion_bombdirt.tik" 
+  for (local.i = 1 ; local.i <= $player.size ; local.i ++)
+    {
+      if (vector_within local.bomb.origin $player[local.i].origin 500)
+        {
+          if (level.fugitiveing[$player[local.i].entnum] == 1)
+            {
+              wait .5
+              $player[local.i] hurt 100
+            }
+        }
+    }
+  local.bomb immediateremove
+  wait 3		
+end 
+//////////////////////////// ****sheriff**** ////////////////////////
+//////////////////////////// ****fugitive**** ////////////////////////
+
+fugitive:
+      local.player = self
+  
+      if ((level.fugitiveing[local.player.entnum] == 0) || (level.fugitiveing[local.player.entnum] == NIL))
+        {
+          local.trig = spawn trigger_multiple
+          local.trig.origin = local.player.origin
+          local.trig wait .01
+          local.trig.targetname = ("fugitive_trig_" + local.player.entnum)
+          local.trig setthread fugitive_setthread
+
+          local.bullettrig = spawn trigger_multiple "spawnflags" "144" //"cnt" "infinite"
+          local.bullettrig.origin = local.player.origin
+          local.bullettrig setsize ( -18 -18 -2 ) ( 18 18 94 )
+          local.bullettrig wait .1
+          local.bullettrig.targetname = ("fugitive_trig2_" + local.player.entnum)
+          local.bullettrig.targetplayer = local.player
+          local.bullettrig setthread fugitive_setthread2
+
+          local.obj = spawn script_origin
+          local.obj.origin = local.player.origin
+          local.obj.targetname = ("fugitive_scr_org_" + local.player.entnum)
+
+          local.bullettrig bind local.obj
+          local.trig bind local.obj
+          local.obj glue local.player 
+          level.fugitiveing[local.player.entnum] = 1
+          local.player light 1.0 1.0 0.0 200.0
+          local.player lighton
+          local.player dmmessage 0 "I'M A FUGITIVE"
+          local.player thread sound_phone   
+          end 
+        }
+
+      if (level.fugitiveing[local.player.entnum] == 1)  
+        {	 
+          $("fugitive_trig_" + local.player.entnum) delete
+          $("fugitive_trig2_" + local.player.entnum) delete
+          $("fugitive_scr_org_" + local.player.entnum) delete
+          local.player lightoff
+          local.player dmmessage 0 "I HAVE BEEN CAUGHT AND BROUGHT TO JUSTICE"
+          level.fugitiveing[local.player.entnum] = 0
+          end 
+        } 	
+    
+end 
+
+
+fugitive_setthread:
+ local.player = parm.other
+end 
+
+fugitive_setthread2:
+  if (parm.other == $world)
+    {
+      self.targetplayer hurt 30
+    }
+end 
+
+sound_phone:
+  while (level.fugitiveing[self.entnum] == 1)
+    {
+      self stufftext "play sound/mechanics/Mec_PhoneRing_01.wav"
+      wait 3
+    }
+end 
+//////////////////////////// ****fugitive**** ////////////////////////
+//////////////////////////// ****killtrace**** ////////////////////////
+
+
+//////////////////////////// ****killtrace**** ////////////////////////
+//////////////////////////// ****rocket_dud**** ////////////////////////
+
+
+rocket_dud:
+       local.player = self
+  
+      if ((level.rocket_duding[local.player.entnum] == 0) || (level.rocket_duding[local.player.entnum] == NIL))
+        {
+          local.trig = spawn trigger_multiple
+          local.trig.origin = local.player.origin
+          local.trig wait 2
+          local.trig.targetname = ("rocket_dud_trig_" + local.player.entnum)
+          local.trig setthread rocket_dud_setthread
+
+          local.obj = spawn script_origin
+          local.obj.origin = local.player.origin
+          local.obj.targetname = ("rocket_dud_scr_org_" + local.player.entnum)
+
+          local.trig bind local.obj
+          local.obj glue local.player 
+          //    local.player takeall
+          level.rocket_duding[local.player.entnum] = 1
+          local.player dmmessage 0 "I'M HELPLESS"
+          // local.player weapon "models/weapons/p38.tik"
+          //local.player weapon "models/weapons/bazooka.tik"
+          //local.player primarydmweapon heavy
+          //local.player useweaponclass heavy
+          end 
+        }
+
+      if (level.rocket_duding[local.player.entnum] == 1)  
+        {	 
+          $("rocket_dud_trig_" + local.player.entnum) delete
+          $("rocket_dud_scr_org_" + local.player.entnum) delete
+          level.rocket_duding[local.player.entnum] = 0
+          end 
+        } 	
+    
+end 
+
+rocket_dud_setthread:
+  local.player = parm.other
+  //local.player resethaveitem "models/weapons/bazooka.tik"
+
+  local.player weaponcommand dual projectile "models/projectiles/bazookashell.tik"
+  local.player ammo heavy 6
+  //local.player weaponcommand dual hitdamage "1"
+
+  //local.player take models/weapons/m1_garand.tik
+  //local.player take models/weapons/bar.tik
+  //local.player take models/weapons/springfield.tik
+  //local.player take models/weapons/thompsonsmg.tik
+  //local.player take models/weapons/bazooka.tik
+  //local.player take models/weapons/shotgun.tik
+  //local.player take models/weapons/colt45.tik
+  //local.player take models/weapons/m2frag_grenade.tik
+  //local.player take models/weapons/mg42carryable.tik
+  //local.player take models/weapons/kar98.tik
+  //local.player take models/weapons/kar98sniper.tik
+  //local.player take models/weapons/mp44.tik
+  //local.player take models/weapons/mp40.tik
+  //local.player take models/weapons/panzerschreck.tik
+  //local.player take models/weapons/shotgun.tik
+  //local.player take models/weapons/p38.tik
+  //local.player take models/weapons/steilhandgranate.tik
+end 
+//////////////////////////// ****rocket_dud**** ////////////////////////
+//////////////////////////// ****rocket_smoke**** ////////////////////////
+
+
+
+//////////////////////////// ****rocket_smoke**** ////////////////////////
+//////////////////////////// ****rocket_ammo**** ////////////////////////
+
+//////////////////////////// ****rocket_ammo**** ////////////////////////
+//////////////////////////// ****rocket_mod**** ////////////////////////
+
+
+
+
+//////////////////////////// ****rocket_mod**** ////////////////////////
+//////////////////////////// ****stackem**** ////////////////////////
+Stackem:
+      local.player = self
+  
+      if ((level.stackeming[local.player.entnum] == 0) || (level.stackeming[local.player.entnum] == NIL))
+        {
+          local.player dmmessage 0 "WHACKEM STACKEM...I'M A BAAAADDDDDD BOY"
+          local.origin = local.player.origin + local.player.forwardvector * 64 + ( 0 0 256)
+          local.angles = ( 0 (local.player.viewangles[1]) 0 )
+          local.spot = trace local.origin (local.origin + ( 0 0 -10000))
+          waitthread stackem_spawnbomb local.origin local.angles
+          waitthread stackem_spawnbomb local.origin local.angles
+          waitthread stackem_spawnbomb local.origin local.angles
+          waitthread stackem_spawnbomb local.origin local.angles
+          waitthread stackem_spawnbomb local.origin local.angles
+          waitthread stackem_spawnbomb local.origin local.angles
+          wait 2
+
+          waitthread stackem_explosion $bomb[1].origin
+          $bomb[1] delete
+          wait .5
+          local.player hurt 17  
+          waitthread stackem_explosion $bomb[1].origin
+          $bomb[1] delete
+          wait .5
+          local.player hurt 17  
+          waitthread stackem_explosion $bomb[1].origin
+          $bomb[1] delete
+          wait .5
+          local.player hurt 17  
+          waitthread stackem_explosion $bomb[1].origin
+          $bomb[1] delete
+          wait .5
+          local.player hurt 17  
+          waitthread stackem_explosion $bomb[1].origin
+          $bomb[1] delete
+          wait .5
+          local.player hurt 17  
+          waitthread stackem_explosion $bomb[1].origin
+          $bomb[1] delete
+          wait .5
+          local.player hurt 17  
+          $bomb_exp delete
+          end 
+        }
+
+      if (level.stackeming[local.player.entnum] == 1)  
+        {	 
+          end 
+        } 	
+    
+end 
+stackem_explosion local.origin:
+  local.exp = spawn script_model "targetname" "bomb_exp"
+  local.exp.model = "models/fx/barrel_gas_destroyed.tik"
+  //local.exp.targetname = "bomb_exp"
+  local.exp.origin = local.origin
+  local.exp solid
+  local.exp show
+end 
+stackem_spawnbomb local.origin local.angles:
+
+  local.bomb = spawn script_model "targetname" "bomb"
+  local.bomb.origin = local.origin 
+  local.bomb model "ammo/us_bomb.tik"
+  local.bomb.angles = local.angles
+  local.bomb solid
+  local.bomb physics_on
+  local.bomb.velocity = (0 0 -10000)
+  local.bomb.mass = 10000
+  local.bomb.gravity = 10000
+  //local.spot = trace local.bomb.origin (local.bomb.origin + ( 0 0 -10000))
+
+  local.bomb playsound drop_bomb
+  local.bomb speed 10000
+  //local.bomb moveto local.spot
+
+end 
+
+
+//////////////////////////// ****stackem**** ////////////////////////
+//////////////////////////// ****crusher**** ////////////////////////
+Crusher:
+      local.player = self
+  
+      if ((level.crushering[local.player.entnum] == 0) || (level.crushering[local.player.entnum] == NIL))
+        {
+          local.player dmmessage 0 "THAT'S ALL FOLKS"
+          local.origin = local.player.origin + ( 0 0 256)
+          local.angles = ( 0 (local.player.viewangles[1]) 0 )
+          local.piano = spawn script_model "targetname" "crusher_piano"
+          local.piano.model = "models/static/piano_d.tik"
+          local.piano.origin = local.origin
+          local.piano.angles = local.angles
+          local.piano solid
+          local.piano show
+          local.piano physics_on
+          local.piano.velocity = (0 0 -100)
+          local.piano.mass = 100
+          local.piano.gravity = 100
+          local.player damage local.player 100 $world (0 0 0) (0 0 0) (0 0 0) 1 2 0 0
+          local.player stufftext "play sound/mechanics/MOH_Piano3.wav"
+          thread crusher_remove_piano
+          end 
+        }
+
+      if (level.crushering[local.player.entnum] == 1)  
+        {	 
+          end 
+        } 	
+    
+end 
+crusher_remove_piano:
+ wait 12
+ $crusher_piano delete
+end 
+
+
+//////////////////////////// ****crusher**** ////////////////////////
+//////////////////////////// ****pigpen**** /////////////////////////////////
+Pigpen:
+      local.player = self
+  
+      if ((level.pigpening[local.player.entnum] == 0) || (level.pigpening[local.player.entnum] == NIL))
+        {
+          local.trig = spawn trigger_hurt
+          local.trig.origin = local.player.origin
+          local.trig.damage = 3
+          local.trig wait 2
+          local.trig.targetname = ("pigpen_trig_" + local.player.entnum)
+          local.trig setthread pigpen_setthread
+
+          local.obj = spawn script_origin
+          local.obj.origin = local.player.origin
+          local.obj.targetname = ("pigpen_scr_org_" + local.player.entnum)
+
+          local.effect1 = spawn "models/fx/gas_mushroom_column.tik"
+          local.effect1.origin = local.obj.origin //+ ( 0 -16 0 )
+          local.effect1.targetname = ("pigpen_effect1_" + local.player.entnum)
+
+          local.effect2 = spawn "models/emitters/lightswarmers_large.tik"
+          local.effect2.origin = local.obj.origin  + ( 0 0 90 )
+          local.effect2.targetname = ("pigpen_effect2_" + local.player.entnum)
+
+          local.effect3 = spawn "models/emitters/lightswarmers_small.tik"
+          local.effect3.origin = local.obj.origin  + ( 0 0 90 )
+          local.effect3.targetname = ("pigpen_effect3_" + local.player.entnum)
+
+          local.trig bind local.obj
+          local.effect1 bind local.obj
+          local.effect2 bind local.obj
+          local.effect3 bind local.obj
+          local.obj glue local.player 
+          level.pigpening[local.player.entnum] = 1
+          local.player dmmessage 0 "I'M A PIGPEN BECAUSE MY BEHAVIOR STINKS"
+          end 
+        }
+
+      if (level.pigpening[local.player.entnum] == 1)  
+	{	 
+	  $("pigpen_trig_" + local.player.entnum) delete
+	  $("pigpen_scr_org_" + local.player.entnum) delete
+	  $("pigpen_effect1_" + local.player.entnum) delete
+	  $("pigpen_effect2_" + local.player.entnum) delete
+	  $("pigpen_effect3_" + local.player.entnum) delete
+          level.pigpening[local.player.entnum] = 0
+          end 
+	} 	
+    
+end 
+
+pigpen_setthread:
+  local.player = parm.other
+  local.player stufftext "play sound/mechanics/WoodGateOpen_m4l32.wav"
+  wait .3
+  if ( local.player.normal_health <= 0 ) //health is at 0 
+    { 
+      $("pigpen_trig_" + local.player.entnum) delete
+      $("pigpen_scr_org_" + local.player.entnum) delete
+      $("pigpen_effect1_" + local.player.entnum) delete
+      $("pigpen_effect2_" + local.player.entnum) delete
+      $("pigpen_effect3_" + local.player.entnum) delete
+      level.pigpening[local.player.entnum] = 0
+    } 	
+end 
+
+
+//////////////////////////// ****pigpen**** /////////////////////////////////
+//////////////////////////// ****thrasher**** /////////////////////////////////

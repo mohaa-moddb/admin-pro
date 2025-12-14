@@ -1,0 +1,14 @@
+main:
+
+	if(level.run[team_balance] != 1){end}
+
+	if (self.dmteam == "allies")
+	{
+		level.adc ++
+	}
+	else if (self.dmteam == "axis")
+	{
+		level.gdc ++
+	}
+
+end

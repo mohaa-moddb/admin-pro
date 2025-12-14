@@ -1,0 +1,150 @@
+
+
+help local.help:
+
+		if(local.help==1)
+		{
+			exec global/ac/console_feedback.scr "--------------------------------------------------------------------"
+			exec global/ac/console_feedback.scr "camper settings"
+			exec global/ac/console_feedback.scr "  "
+			exec global/ac/console_feedback.scr "Type the cvar on its own to get its settings"
+			exec global/ac/console_feedback.scr "Type the cvar camper_help followed by the a cvar to get information on it"
+			exec global/ac/console_feedback.scr "E.g camper_help camper_type"
+			exec global/ac/console_feedback.scr "===================="
+			exec global/ac/console_feedback.scr "Cvars"
+			exec global/ac/console_feedback.scr "-----"
+				
+			for(local.i=1;local.i<=game.campersettings.size;local.i++)
+			{
+				exec global/ac/console_feedback.scr game.campersettings[local.i][1]
+			}
+
+			exec global/ac/console_feedback.scr "===================="
+			exec global/ac/console_feedback.scr "  "
+			exec global/ac/console_feedback.scr "Commands"
+			exec global/ac/console_feedback.scr "-------"
+
+			for(local.i=1;local.i<=game.all_commands.size;local.i++)
+			{
+				exec global/ac/console_feedback.scr game.all_commands[local.i] [1]
+			}
+		
+			exec global/ac/console_feedback.scr "  "	
+			exec global/ac/console_feedback.scr "===================="	
+
+			local.campersettings = waitthread getgame
+
+			exec global/ac/console_feedback.scr "===================="
+			exec global/ac/console_feedback.scr "  "
+			exec global/ac/console_feedback.scr "Weapon cmd's"
+			exec global/ac/console_feedback.scr "-------"
+
+			for(local.i=1;local.i<=local.campersettings.size;local.i++)
+			{
+				exec global/ac/console_feedback.scr local.campersettings[local.i] [1]
+			}
+
+			exec global/ac/console_feedback.scr game.all_commands.size 1
+			exec global/ac/console_feedback.scr " Commands and settings"
+			exec global/ac/console_feedback.scr "  "
+			exec global/ac/console_feedback.scr "Type the cvar on its own to get its settings"
+			exec global/ac/console_feedback.scr "Type the cvar admin_cmd help followed by the a cvar to get information on it"
+			exec global/ac/console_feedback.scr "E.g admin_cmd help type"
+			exec global/ac/console_feedback.scr "  "
+			exec global/ac/console_feedback.scr "--------------------------------------------------------------------"
+		}
+		else
+		{
+			waitthread display_help local.help
+		}	
+end
+
+
+display_help local.help:
+
+		for(local.t=1;local.t<=3;local.t++)
+		{
+			if(local.t==1)
+			{
+				local.info = game.campersettings
+			}
+			else if(local.t==2)
+			{
+				local.info = game.all_commands
+			}
+			else if(local.t==3)
+			{
+				local.info = waitthread getgame
+			}
+
+			local.yes=0
+			for(local.campset=1;local.campset <= local.info.size; local.campset++)
+			{	
+				local.maybe = local.info[local.campset] [1]
+
+				if(local.help.size == local.maybe.size)
+				{
+					for(local.i=0;local.i<= local.maybe.size - 1 ;local.i++)
+					{
+						if(local.maybe[local.i] == local.help[local.i])
+						{
+							local.yes++
+						}
+					}
+					if(local.yes==local.maybe.size)
+					{
+						waitthread foundword local.maybe
+						end
+					}
+					local.yes=0
+				}
+			}	
+		}
+		// dont rmemeber why this is here so // it out.:S
+		//exec global/ac/console_feedback.scr "Not found"
+end
+
+
+
+foundword local.word:
+
+	exec global/ac/console_feedback.scr "  "
+
+	for(local.i=1;local.i<=game.campersettings.size;local.i++)
+	{		
+		local.set = game.campersettings[local.i] [1]
+		if(local.set == local.word)
+		{
+			exec global/ac/console_feedback.scr game.campersettings[local.i][3]
+			exec global/ac/console_feedback.scr ( local.set + " Set to " + game.campersettings[local.i] [2] )	
+			end
+		}
+	}
+
+	for(local.i=1;local.i<=game.all_commands.size;local.i++)
+	{
+		local.set = game.all_commands[local.i] [1]
+		if(local.set == local.word)
+		{
+			exec global/ac/console_feedback.scr game.all_commands[local.i][3]
+			local.eq = game.all_commands[local.i] [2]
+			exec global/ac/console_feedback.scr ( local.set + " Set to " + game.all_commands[local.i] [2] )	
+			end
+		}
+	}
+		
+	local.campersettings = waitthread getgame
+
+	for(local.i=1;local.i<=local.campersettings.size;local.i++)
+	{
+		local.set = local.campersettings[local.i] [1]
+		if(local.set == local.word)
+		{
+			exec global/ac/console_feedback.scr game.campersettings[local.i][3]
+			exec global/ac/console_feedback.scr ( local.set + " is set to " + local.campersettings[local.i] [2] )	
+			end
+		}
+	}
+
+	exec global/ac/console_feedback.scr "  "
+end

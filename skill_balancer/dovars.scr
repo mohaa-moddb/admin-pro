@@ -1,0 +1,7 @@
+main:
+	level.adc = int 0
+	level.gdc = int 0
+	level.alliesmove = int 0
+	level.axismove = int 0
+	level.dthrat = int 0
+end

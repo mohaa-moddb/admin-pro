@@ -1,0 +1,40 @@
+main:
+	local.settings = makearray
+		// advert, message center
+		"adverts"			"1"				" Display MOD advert info, 1 = on, 0 = off."
+		"advert_time"			"2"				" Time between advert messages (hud print)"	
+		"advert_colour"			"0 1 0" 			" The colour of the advert text RBG"	
+		"advert_font"			"verdana-12" 			" Set the font for the advert text"																																	
+		"typewriter_click"		"1" 				" make a clicking noise when typing"																																	
+		"scroll_speed"			"2" 				" Speed the text scrolls at"																																	
+		"scroll_dir"			"left"	 			" Scroll direction, left or right"																																	
+	endarray
+
+end local.settings
+
+
+
+messages:
+	
+	local.messages = makearray
+		// message		// time to display for		// display style (scroll, fade or typewriter
+	endarray
+
+end local.messages
+
+
+
+// Server messaging , Uses hud print to print your messages. 
+// i included some suggestions
+
+//-----------------
+// example
+//
+//	local.messages = makearray
+//		// message		// time to display for		// Style. So u can display a message different each time.
+//		 eg
+//		"Elgan Sayer"		"3"				"fade"
+//		"is"			"3"				"typewriter"
+//		"{sfx}"			"3"				"scroll""
+//	endarray
+//-----------------

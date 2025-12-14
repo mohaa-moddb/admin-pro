@@ -1,0 +1,66 @@
+main:
+
+	if(level.run["weapons_limiter"] != "1"){end}
+
+	if(game.file["settings/weapons_limiter"])
+	{
+		local.threads = "weapons" + game.game
+		local.weapons  = waitexec  game.file["settings/weapons_limiter"]::local.threads
+		local.weapons = waitthread global/strings.scr::Array_to_lower local.weapons
+		game.limiter_weapons = local.weapons	
+
+		local.threads = "secondryweapons" + game.game
+		game.secondry_limiter_settings = waitexec game.file["settings/weapons_limiter"]::local.threads
+	}
+	else
+	{
+		end
+	}
+
+	if(game.limiter_weapons == NIL)
+	{
+		level.run["weapons_limiter"] = "0"
+		waitframe
+	}
+
+	exec global/ac/spawn_detect.scr weapon_limit/radar.scr
+
+	thread secondryweapons
+end
+
+secondryweapons: //Check to  take pistols or nades or stuff
+
+	if(game.secondry_limiter_settings == NIL)
+	{
+		level.run["weapons_limiter"] = "0"
+		waitframe
+	}
+
+	local.found = 0
+	for(local.i=1; local.i <= game.secondry_limiter_settings.size; local.i++)
+	{
+		if( game.secondry_limiter_settings[local.i][2] == "1")
+		{	
+			if(level.run["weapons_limiter"] != "1"){end}
+			local.found++
+			local.take[local.found] = game.secondry_limiter_settings[local.i][3]
+		}
+	}
+
+	if(local.found == 0 ){end} //end if none are to be taken
+
+	while ( 1 )
+	{
+		for(local.i = 1;local.i <= $player.size;local.i++)
+		{
+			for(local.p=1;local.p <= local.found; local.p++)
+			{
+				if(level.run["weapons_limiter"] != "1"){end}
+				$player[local.i] take local.take[local.p]
+			}
+		}
+		waitframe
+	}
+end
+
+

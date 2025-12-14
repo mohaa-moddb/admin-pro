@@ -1,0 +1,116 @@
+// This is a global ac script for detecting spawning.
+// exec once! with the path for your script. eg
+//
+//	if(level.spawnpotect!=1)
+//	{
+//		level.spawnpotect=1
+//		exec global/ac/spawn_detect.scr global/ac/spawn_protection.scr // exec with this script path
+//	}	
+//
+
+main local.fr:
+
+	if(level.gametype == NIL)
+	{
+		level.gametype = getcvar "g_gametype"
+	}
+
+	if(level.gametype == "0")
+	{
+		end
+	}
+
+	if(local.fr == "1")
+	{
+		if(self.spawned == NIL)
+		{
+			wait 0.20
+			//self.spawnedcheck=1
+			//self thread follow
+		}
+
+		self.spawned = 1
+		end
+	}
+	else if(local.fr != "")
+	{
+		if(level.spawn_scripts==NIL)
+		{
+			level.spawn_scripts[1] = local.fr
+		}
+		else
+		{
+		//	//some odd reason it wont let me get the size. so get it using a loop.
+		//	// errors when trying ?:S
+		//	for(local.i = 1; local.i <= ; local.i++)
+		//	{
+		//	}
+			local.i = level.spawn_scripts.size
+			local.i++
+			level.spawn_scripts[local.i] = local.fr
+		}
+	}
+
+	if(level.spawnsetup!=1)
+	{
+		level.spawnsetup=1
+	}
+	else
+	{
+		end
+	}
+
+
+end
+
+setup:
+	while ( 1 )
+	{
+		 for(local.i = 1; local.i <= $player.size; local.i++)
+		 {
+			if($player[local.i].spawnedcheck !=1 && $player[local.i] != NIL && $player[local.i].dmteam !="spectator")
+			{	
+				$player[local.i].spawnedcheck=1
+				$player[local.i] thread follow
+			}
+		}
+		waitframe
+	}
+end
+
+follow:
+
+	if(self.spawned != NIL)
+	{
+		local.team = self.dmteam
+		while(isalive self && self.dmteam == local.team ) 
+		{
+			waitframe
+			if(self == NIL || self == NULL)
+			{
+				end
+			}
+		}
+	}
+	
+	self.spawned=0
+	while(self.spawned==0)
+	{
+		waitframe
+		if(self == NIL || self == NULL)
+		{
+			end
+		}
+	}
+
+	//run the script that want spawn detection
+
+	for(local.i = 1; local.i <= level.spawn_scripts.size; local.i++)
+	{
+		self exec level.spawn_scripts[local.i]
+	}
+
+	//end of run the script that want spawn detection
+
+	self.spawnedcheck = 0
+end

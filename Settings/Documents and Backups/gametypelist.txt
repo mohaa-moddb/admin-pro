@@ -1,0 +1,14 @@
+
+gametypes:
+	
+	local.gametypes = makeArray
+	//game type #	// String- just for refrence
+		"1"	//FFA	
+		"2"	//TDM
+		"3"	//RBM
+		"4"	//OBJ
+		"5"	//TOW
+		"6"	//LIB
+	endArray
+
+end local.gametypes

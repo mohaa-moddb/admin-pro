@@ -1,0 +1,20 @@
+
+// this is just stuff that mgiht eb usefull
+
+
+// find player:
+// exec with a id from console or whatever and will return the player
+// returns nil if not found
+
+find_player local.maybeplayer:
+
+	for(local.i=1; local.i <= $player.size; local.i++) //loop through and find the player
+	{   
+		if(local.maybeplayer == string($player[local.i].entnum)) //if the number is what was enterd into console then work
+		{
+			local.player = $player[local.i]
+			end local.player
+		}         
+	}   
+
+end 

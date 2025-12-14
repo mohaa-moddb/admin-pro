@@ -1,0 +1,335 @@
+Added
+
+To state : KILLED
+
+	entrycommands
+	{
+		nextpaintime -1 // allow all pain calls to work properly for death anim selection
+		exec global/killed.scr "times_killed"
+	}
+
+-----------------------------------------------------------------------------------------------------------------------
+
+Changed
+
+AT state : KILLED
+
+		KILLED_GENERIC		: default
+
+cgane to
+
+		KILLED_MOD		: default
+-----------------------------------------------------------------------------------------------------------------------
+Added
+
+state
+
+state KILLED_MOD
+{
+	states
+	{
+		KILLED_MOD_PELVIS			: PAIN_LOCATION "pelvis"
+		KILLED_MOD_TORSO_LOWER			: PAIN_LOCATION "torso_lower"
+		KILLED_MOD_TORSO_MID			: PAIN_LOCATION "torso_mid"
+		KILLED_MOD_TORSO_UPPER			: PAIN_LOCATION "torso_upper"
+		KILLED_MOD_NECK				: PAIN_LOCATION "neck"
+		KILLED_MOD_HEAD				: PAIN_LOCATION "head"
+		KILLED_MOD_HEAD				: PAIN_LOCATION "helmet"
+		KILLED_MOD_R_ARM_UPPER			: PAIN_LOCATION "r_arm_upper"
+		KILLED_MOD_R_ARM_LOWER			: PAIN_LOCATION "r_arm_lower"
+		KILLED_MOD_R_HAND			: PAIN_LOCATION "r_hand"
+		KILLED_MOD_L_ARM_UPPER			: PAIN_LOCATION "l_arm_upper"
+		KILLED_MOD_L_ARM_LOWER			: PAIN_LOCATION "l_arm_lower"
+		KILLED_MOD_L_HAND			: PAIN_LOCATION "l_hand"
+		KILLED_MOD_R_LEG_UPPER			: PAIN_LOCATION "r_leg_upper"
+		KILLED_MOD_R_LEG_LOWER			: PAIN_LOCATION "r_leg_lower"
+		KILLED_MOD_R_FOOT			: PAIN_LOCATION "r_foot"
+		KILLED_MOD_L_LEG_UPPER			: PAIN_LOCATION "l_leg_upper"
+		KILLED_MOD_L_LEG_LOWER			: PAIN_LOCATION "l_leg_lower"
+		KILLED_MOD_L_FOOT			: PAIN_LOCATION "l_foot"
+
+		KILLED_MOD_TORSO_UPPER	: default
+	}
+}
+
+-----------------------------------------------------------------------------------------------------------------------
+Added
+stats mod locations
+
+
+
+state KILLED_MOD_PELVIS
+{
+	entrycommands
+	{
+		exec global/killed.scr "times_pelvis"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_TORSO_LOWER
+{
+	entrycommands
+	{
+		exec global/killed.scr "torso_lower"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_TORSO_MID
+{
+	entrycommands
+	{
+		exec global/killed.scr "torso_mid"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_TORSO_UPPER
+{
+	entrycommands
+	{
+		exec global/killed.scr "torso_upper"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_NECK
+{
+	entrycommands
+	{
+		exec global/killed.scr "neck"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_HEAD
+{
+	entrycommands
+	{
+		exec global/killed.scr "head"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_R_ARM_LOWER
+{
+	entrycommands
+	{
+		exec global/killed.scr "r_arm_lower"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_R_HAND
+{
+	entrycommands
+	{
+		exec global/killed.scr "r_hand"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_R_ARM_UPPER
+{
+	entrycommands
+	{
+		exec global/killed.scr "r_arm_upper"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_L_ARM_UPPER
+{
+	entrycommands
+	{
+		exec global/killed.scr "l_arm_upper"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_L_ARM_LOWER
+{
+	entrycommands
+	{
+		exec global/killed.scr "l_arm_lower"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_L_HAND
+{
+	entrycommands
+	{
+		exec global/killed.scr "l_hand"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_R_LEG_UPPER
+{
+	entrycommands
+	{
+		exec global/killed.scr "r_leg_upper"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_R_LEG_LOWER
+{
+	entrycommands
+	{
+		exec global/killed.scr "r_leg_lower"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_R_FOOT
+{
+	entrycommands
+	{
+		exec global/killed.scr "r_foot"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_L_LEG_UPPER
+{
+	entrycommands
+	{
+		exec global/killed.scr "l_leg_upper"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_L_LEG_LOWER
+{
+	entrycommands
+	{
+		exec global/killed.scr "l_leg_lower"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+
+state KILLED_MOD_L_FOOT
+{
+	entrycommands
+	{
+		exec global/killed.scr "l_foot"
+	}
+
+	states
+	{
+		KILLED_GENERIC	: default
+	}
+}
+-----------------------------------------------------------------------------------------------------------------------
+Added
+
+To state : KILLED_RUNNING
+
+	entrycommands
+	{
+		exec global/killed.scr "times_running"
+	}
+
+-----------------------------------------------------------------------------------------------------------------------
+Added
+
+To state : KILLED_CROUCHING
+
+	entrycommands
+	{
+		exec global/killed.scr "times_crouching"
+	}
+
+-----------------------------------------------------------------------------------------------------------------------
+Added
+
+To state : KILLED_STANDING
+
+	entrycommands
+	{
+		exec global/killed.scr "times_stood"
+	}
+-----------------------------------------------------------------------------------------------------------------------
+Added
+
+To state : EXPLOSION_KILLED
+
+	entrycommands
+	{
+		exec global/killed.scr "times_blownup"
+	}
+-----------------------------------------------------------------------------------------------------------------------
+
+
+

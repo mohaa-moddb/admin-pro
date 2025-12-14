@@ -1,0 +1,198 @@
+// This script is to give the correct weapons and grenades to the player depending on their team and skin.
+// 27 March 2005
+// player exec script. 
+
+main: 
+
+	if(game.skins == NIL)
+	{
+		waitthread load_skins //if not yet done, Load the skins 
+	}
+
+	//find the player skin and team
+	for(local.i = 1;local.i <= level.skins[allies].size; local.i++)
+	{
+		if(self.model == ( "models/player/" + level.skins[allies][local.i][1] ) )
+		{
+			local.team = level.skins[allies][local.i][2] //the team!!
+			break //stop from loop
+		}	
+	}
+
+	//give correct weapons
+	if(self.dmteam == "allies")
+	{
+		switch ( local.team  )
+		{
+		case "us":
+			self give "models/weapons/m2frag_grenade.tik"		//give nade
+			self give "models/weapons/M18_smoke_grenade.tik"	//give smoke nade
+			self give "models/weapons/colt45.tik"			//give pistol
+		break
+		case "uk":
+			self give "models/weapons/mills_grenade.tik"		//give nade
+			self give "models/weapons/M18_smoke_grenade.tik"	//give smoke nade
+			self give "models/weapons/webley_revolver.tik"		//give pistol
+		break
+		case "ussr":
+			self give "models/weapons/Russian_F1_grenade.tik"	//give nade
+			self give "models/weapons/RDG-1_Smoke_grenade.tik"	//give smoke nade
+			self give "models/weapons/nagent_revolver.tik"		//give pistol
+		break
+		default:
+			// player not found. give them these to keep em happy
+			self give "models/weapons/m2frag_grenade.tik"		//give nade
+			self give "models/weapons/M18_smoke_grenade.tTIK"	//give smoke nade
+			self give "models/weapons/colt45.tik"			//give pistol
+		}
+	}
+	else //if axis
+	{
+		if(game.game== "SH")
+		{
+			self give "models/weapons/steilhandgranate.tik" //give nade
+			self give "models/weapons/nebelhandgranate.tik"	//give smoke nade
+			self give "models/weapons/p38.tik"		//give pistol
+		}
+		else
+		{
+			switch(local.team )
+			{
+			case "de":
+				self give "models/weapons/steilhandgranate.tik" //give nade
+				self give "models/weapons/nebelhandgranate.tik"	//give smoke nade
+				self give "models/weapons/p38.tik"		//give pistol
+			break
+			case "it":
+				self give "models/weapons/It_W_Bomba.tik"	 //give nade
+				self give "models/weapons/It_W_BombaBreda.tik"	//give smoke nade
+				self give "models/weapons/It_W_Beretta.tik"	//give pistol
+			break
+			default:
+				self give "models/weapons/steilhandgranate.tik" //give nade
+				self give "models/weapons/nebelhandgranate.tik"	//give smoke nade
+				self give "models/weapons/p38.tik"		//give pistol
+			}
+		}
+	}
+	
+end
+
+load_skins:
+
+	if(game.game == "SH")
+	{
+		level.skins[allies] = makearray
+			"_american_army_cold.tik"				"us"	
+			"_american_army_cold_fps.tik"				"us"	
+			"_american_army_end.tik"				"us"
+			"_american_army_end_fps.tik"				"us"
+			"allied_101st_captain.tik"				"us"
+			"allied_101st_infantry.tik"				"us"
+			"allied_101st_infantry_fps.tik"				"us"
+			"allied_101st_scout.tik"				"us"
+			"allied_101st_scout_fps.tik"				"us"
+			"allied_501st_pir_scout.tik"				"us"
+			"allied_501st_pir_scout_fps.tik"			"us"
+			"allied_501st_pir_soldier.tik"				"us"
+			"allied_501st_pir_soldier_fps.tik"			"us"
+			"allied_british_6th_airborne_captain.tik"		"uk"
+			"allied_british_6th_airborne_paratrooper.tik"		"uk"
+			"allied_british_6th_airborne_paratrooper_fps.tik"	"uk"
+			"allied_british_tank_corporal.tik"			"uk"
+			"allied_british_tank_corporal_fps.tik"			"uk"
+			"allied_british_tank_corporal_fps.tik"			"uk"
+			"allied_russian_corporal.tik"				"ussr"
+			"allied_russian_corporal_fps.tik"			"ussr"
+			"allied_russian_crazy_boris.tik"			"ussr"
+			"allied_russian_crazy_boris_fps.tik"			"ussr"
+			"allied_russian_recon_scout.tik"			"ussr"
+			"allied_russian_recon_scout_fps.tik"			"ussr"
+			"allied_russian_recon_soldier.tik"			"ussr"
+			"allied_russian_recon_soldier_fps.tik"			"ussr"
+			"allied_russian_seaman.tik"				"ussr"
+			"allied_russian_seaman_fps.tik"				"ussr"
+			"allied_technician.tik"					"ussr"
+			"allied_technician_fps.tik"				"us"
+			"allied_airborne.tik"					"us"
+			"allied_manon.tik"					"us"
+			"allied_pilot.tik.tik"					"us"
+			"allied_sas.tik"					"us"
+			"american_army.tik"					"us"
+			"american_ranger.tik"					"us"
+			"allied_airborne_fps.tik"				"us"
+			"allied_manon_fps.tik"					"us"
+			"allied_pilot_fps.tik"					"us"
+			"allied_sas_fps.tik"					"us"
+			"american_army_fps.tik"					"us"
+			"american_ranger_fps.tik"				"us"
+		endarray
+	}
+	else
+	{
+		level.skins[allies] = makearray
+			"allied_101st_captain.tik"				"us"
+			"allied_101st_captain_fps.tik"				"us"
+			"allied_101st_infantry.tik"				"us"
+			"allied_101st_infantry_fps.tik"				"us"
+			"allied_101st_scout.tik"				"us"
+			"allied_101st_scout_fps.tik"				"us"
+			"allied_501st_pir_scout.tik"				"us"
+			"allied_501st_pir_scout_fps.tik"			"us"
+			"allied_501st_pir_soldier.tik"				"us"
+			"allied_501st_pir_soldier_fps.tik"			"us"
+			"allied_british_6th_airborne_captain.tik"		"uk"
+			"allied_british_6th_airborne_captain_fps.tik"		"uk"
+			"allied_british_6th_airborne_paratrooper.tik"		"uk"
+			"allied_british_6th_airborne_paratrooper_fps.tik"	"uk"
+			"allied_british_cmd.tik"				"uk"
+			"allied_british_cmd_fps.tik"				"uk"
+			"allied_british_tank.tik"				"uk"	
+			"allied_british_tank_corporal.tik"			"uk"
+			"allied_british_tank_corporal_fps.tik"			"uk"
+			"allied_british_tank_fps.tik"				"uk"
+			"allied_russian_corporal.tik"				"ussr"
+			"allied_russian_corporal_fps.tik"			"ussr"
+			"allied_russian_crazy_boris.tik"			"ussr"
+			"allied_russian_crazy_boris_fps.tik"			"ussr"
+			"allied_russian_recon_scout.tik"			"ussr"
+			"allied_russian_recon_scout_fps.tik"			"ussr"
+			"allied_russian_recon_soldier.tik"			"ussr"
+			"allied_russian_recon_soldier_fps.tik"			"ussr"
+			"allied_russian_seaman.tik"				"ussr"
+			"allied_russian_seaman_fps.tik"				"ussr"
+			"allied_technician.tik"					"us"
+			"allied_technician_fps.tik"				"us"
+			"allied_us_mask.tik"					"us"
+			"allied_us_mask_fps.tik"				"us"
+			"allied_us_tank.tik"					"us"
+			"allied_us_tank_fps.tik"				"us"
+			"allied_wheathers.tik"					"us"
+			"allied_wheathers_fps.tik"				"us"
+			"_american_army_cold.tik"				"us"
+			"_american_army_cold_fps.tik"				"us"
+			"_american_army_end.tik"				"us"
+			"_american_army_end_fps.tik"				"us"
+		endarray
+
+		level.skins[axis] = makearray
+			"german_ardennes_artillery_commander.tik"		"de"
+			"german_ardennes_artillery_commander_fps.tik"		"de"
+			"german_dday_colonel.tik"				"de"
+			"german_dday_colonel_fps.tik"				"de"
+			"german_panzer_corporal.tik"				"de"
+			"german_panzer_corporal_fps.tik"			"de"
+			"german_stukageschwader.tik"				"de"
+			"it_ax_ital_vol.tik"					"it"
+			"it_ax_ital_vol_fps.tik"				"it"
+			"sc_ax_ital_inf.tik"					"it"
+			"sc_ax_ital_inf2.tik"					"it"
+			"sc_ax_ital_inf2_fps.tik"				"it"
+			"sc_ax_ital_inf_fps.tik"				"it"
+			"sc_ax_ital_para.tik"					"it"
+			"sc_ax_ital_para_fps.tik"				"it"
+		endarray
+	}
+end
+
+

@@ -1,0 +1,137 @@
+MG 42 fix
+
+Added
+		TURRET_START			: IS_USING_TURRET 
+to state
+	state CHARGE_ATTACK_GRENADE_SECONDARY
+-------
+Added
+		TURRET_START			: IS_USING_TURRET 
+to state
+	state CHARGE_ATTACK_GRENADE
+
+-------------------------------------------------------------------------
+Grenade drop fix
+
+Added
+		STAND 				: IS_WEAPON_ACTIVE "Error" "grenade"
+to state
+	state RELEASE_ATTACK_GRENADE_SECONDARY
+-------
+Added
+		STAND 				: IS_WEAPON_ACTIVE "Error" "grenade"
+to state
+	state RELEASE_ATTACK_GRENADE
+
+
+Added
+		STAND 				: !HAS_WEAPON
+to state
+	state RELEASE_ATTACK_GRENADE_SECONDARY
+-------
+Added
+		STAND 				: !HAS_WEAPON
+to state
+	state RELEASE_ATTACK_GRENADE
+
+------
+
+Added
+		STAND 				: IS_WEAPON_ACTIVE "Error" "grenade"
+to state
+	state CHARGE_ATTACK_GRENADE_SECONDARY
+-------
+Added
+		STAND 				: IS_WEAPON_ACTIVE "Error" "grenade"
+to state
+	state CHARGE_ATTACK_GRENADE
+
+
+Added
+		STAND 				: !HAS_WEAPON
+to state
+	state CHARGE_ATTACK_GRENADE_SECONDARY
+-------
+Added
+		STAND 				: !HAS_WEAPON
+to state
+	state CHARGE_ATTACK_GRENADE
+-------------------------------------------------------------------------
+spawn detection 
+
+Added
+		exec global/ac/spawn_detect.scr 1
+to state
+		state RAISE_WEAPON
+
+-------------------------------------------------------------------------
+team swap fix
+
+Added
+
+		exec global/check_team_swap.scr "end"
+	
+to state
+		state FINISHED_GET_OFF_LADDER
+-------
+Added
+
+		exec global/check_team_swap.scr "end"
+	
+to state
+		state JUMP_OFF_LADDER
+-------
+Added
+	exec global/check_team_swap.scr 
+
+to state
+		state USE_LADDER
+-------
+Added
+	entrycommands
+	{
+		exec global/check_team_swap.scr 
+	}
+
+to state
+		state TURRET_START
+-------
+replace
+		STAND			: !IS_USING_TURRET
+
+with 
+		TURRET_END		: !IS_USING_TURRET
+
+to state
+		state TURRET_IDLE
+
+-------
+
+added state
+
+state TURRET_END
+{
+	entrycommands
+	{
+		exec global/check_team_swap.scr "end"
+	}
+
+	states
+	{
+
+		STAND			: default
+	}
+}
+
+-------------------------------------------------------------------------
+team balance scripts 
+
+Added
+	entrycommands
+	{
+		exec skill_balancer/player_thread.scr
+	}
+
+to state
+		state RAISE_WEAPON
+----------------------------------------------------------

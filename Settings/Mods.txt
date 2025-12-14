@@ -1,0 +1,92 @@
+// Anti camper SFX camper mods and commands settings text file 
+// version 1.00
+//
+// Questions should go to www.mods-r-us.net forums or elgan.sayer@gmail.com
+//
+// feel free to pass or tamper with this mod as its for u!
+// 
+// www.mods-r-us.net
+//
+// this is a file for anti_camper mod version {sfx} 1.00
+//
+// **************************************************************************************************************************************
+
+// Scripts to run , Having these seperate allow the possibility of adding scripts that can be turned on and off using admin_cmd.
+// add to the top of your script,..
+//
+// if(level.run[ YOUR SCRIPT NAME ] == 0){end}
+// 0 = off, 1 = on.
+// 
+// eg, 
+//
+// if(level.run[camper] == 0){end} //this shuts off the camper mod 
+//
+// IF YOU ARE NOT an experienced scripter please just ignore the complicated script and e-mail me if you want a script added that can be turned on and off.
+//
+
+// These also are admin_cmd commands. use admin_cmd script_name 0/1 to turn it on or off.
+// admin_cmd "camper 0" - would turn camper off.
+
+
+// Basicaly any mdos that i make in the future i will make two versions. One version you will be able to add to this list of scripts and it will with camper.
+
+// If the game type is not found. The map is not checked for. So it checks gametype first is its there check for map. If not dont run script.
+// The camper has a game type and maps list that contains all. This is so you have an example of how to make a list. 
+// You will need to make a maps and game types list for the other scripts See me for help. www.mods-r-us.ner
+
+main:
+
+	// Scripts and settings
+	local.camper_scripts = makearray
+		//script name			//setting (1 = on, 0 = off)			//help									//path								//Maps list ("all" for all maps)				// game type list ("all" for all game types.
+		"camper" 				"1"  				" Turns camper on and off 1=On, 0 = OFF"					global/anti_camper.scr						settings/camper.txt::maps					settings/camper.txt::gametypes
+		"weapons_limiter"			"1"				" limit weapons or just take, swap them"					weapon_limit/weapons_limiter.scr				settings/weapons_limiter.txt::maps				settings/weapons_limiter.txt::gametypes
+		"cvar_forcing"				"0"				" Turns cvar forcing on or off. 1= on, 0 = off"					global/ac/cvar_forcer.scr					all								all
+		"team_balance"				"0"				" Turns Jim's team balance on or off. 1= on, 0 = off"				global/ac/team_balance.scr					all								settings/team_balance.txt::gametypes
+		"music"					"0"				" Play music to players depending on settings"					global/ac/music.scr						all								all
+		"mines"					"1"				" Random, stickybombs, proimity, plant mines"					global/ac/mines/mines.scr					settings/mines.txt::maps					settings/mines.txt::gametypes
+		"time_alive"				"1"				" Count time alive for"								global/ac/time_alive.scr					all								all
+		"spec_eye"				"0"				" Spectators use eyes of person they spectate "					global/ac/spec_eye.scr						all								all
+		"spawn_protection"			"1"				" Protect spawning in AA. Wont run in SH or BT"					global/ac/spawn_protection_setup.scr				settings/spawn_protection.txt::maps				settings/spawn_protection.txt::gametypes
+		"message_center"			"1"				" Server Messages using hud Draw"						global/ac/server_messages.scr					all								all
+	endarray
+
+end local.camper_scripts
+
+
+commands:
+
+	// These paths are the paths of settings and text files for new scripts. 
+	// it is better to add commands to the main camper.txt command list but for new mods a text command file will be given. Entering its path into the list will add the commands to the console cmd list.
+	// by default the camper.txt will be loaded and all the commands. Then this list will be loaded with all the commands and settings.
+	// This is seperate so you can add mroe and more commands or just seperate them to make things easier and more organised.
+
+ 	// Do not remove lines!.
+
+	// Dont add .txt to the end, the script does that for you. This is so it can find map specific files.
+	
+	local.admin_cmds = makearray
+		// setting path				// thread, set none if none			// Load or dont  , 1 - load, 0 - ignore.			//Map specific, 1 - find map setting file. 0 use normal. note: Restart must be "1"			
+		"settings/camper"		"commands"					"1"								"0"					
+		"settings/Mods"			"none"						"1"								"0"		// These scripts are also commands. ability to turn them on and off					
+		"settings/spawn_protection"	"none"						"1"								"0"		
+		"settings/mines"		"none"						"1"								"0"		
+		"settings/weapons_limiter"	"none" 						"1"								"0"		
+		"settings/message_center"	"none" 						"1"								"0"		
+		"settings/advanced"		"none" 						"1"								"0"		
+		"settings/flyable_planes"	"none"						"1"								"0"								
+		"settings/team_balance"		"none"						"1"								"0"								
+	endarray
+end local.admin_cmds
+
+
+
+// If you wish for the mod to run faster, have less work for it to do. removing the ammount of commands can aid it. This makes searching for them quicker. This script is not the place to do that though. If you want to remove unused commands
+//simply open up the setting file with all the commands in and remove them from the list.
+
+//Removing lines from above can break the script. The scripts use the commands from the settings file but may also exec other section of the file for other data.
+//For example the anti camper main camper script gets its commands from the above but also uses this to see what file to exec to get other info like game types.
+
+	// NOTE: "settings/camper" must stay the same path.
+	// NOTE: "settings/weapons_limiter" must stay the same path.
+// This is because the scripts search for them specific paths

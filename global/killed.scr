@@ -1,0 +1,6 @@
+main local.cvar:
+
+	self stufftext ( "add " + local.cvar + " 1" )
+
+	exec skill_balancer/dodeath.scr
+end

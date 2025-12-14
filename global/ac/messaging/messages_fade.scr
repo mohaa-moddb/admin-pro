@@ -1,0 +1,87 @@
+
+// print the adverts
+main local.msg local.delay:
+
+	if(level.msginginuse==1)
+	{
+		while(level.msginginuse==1)
+		{
+			wait 1
+		}
+	}
+
+	local.delay = int local.delay
+
+	level.msginginuse=1
+
+
+	local.lengh = 0
+	local.lengh =  ( local.lengh - local.msg.size )
+
+	local.lightcolour = waitexec global/settings.scr::getcmd  "advert_colour" 
+	local.font = waitexec global/settings.scr::getcmd  "advert_font" 
+
+	local.wordcount = 0
+
+	if(local.font == NIL)
+	{
+		local.font = "facfont-20"
+	}
+
+	if(local.lightcolour == NIL)
+	{
+		local.lightcolour = "0 1 0"
+	}
+
+	if(local.delay == NIL)
+	{
+		local.delay = 2
+	}
+
+
+	for(local.i=0;local.i<=local.lightcolour.size - 1;local.i++)
+	{	
+
+		if(local.lightcolour[local.i]!=" ")
+		{
+			if(local.light[local.wordcount]==NIL)
+			{
+				local.light[local.wordcount]=""
+			}
+
+			local.light[local.wordcount] += local.lightcolour[local.i]
+		}
+		else
+		{	
+			local.wordcount++
+		}
+	}	
+
+
+	local.lengh = local.lengh * 3
+	// draw the overlay coloured string
+	huddraw_virtualsize 51 1
+	huddraw_rect 51 local.lengh 200 0 0
+	huddraw_color 51 local.light[0] local.light[1] local.light[2]
+	huddraw_font 51 local.font
+	huddraw_string 51 local.msg 
+	huddraw_align 51 "center" "center"
+
+	// display a fade-in
+	for(local.i = 0; local.i <= 1; local.i += .1)
+	{
+     		huddraw_alpha 51 local.i
+		waitframe
+	}
+   
+	wait local.delay
+   
+	// display a fade-out
+	for (local.i = 1; local.i >= 0; local.i -= .1)
+	{
+		huddraw_alpha 51 local.i
+		waitframe
+	}
+	
+	level.msginginuse=0
+end 

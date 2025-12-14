@@ -1,0 +1,67 @@
+
+
+main:
+	if(level.run["mines"] != "1")
+	{
+		end
+	}
+	
+	if (level.mef_gametype == "ft")
+	{
+		end
+	}
+
+	local.randnum = randomint(3) //randomize to 3
+
+	switch(local.randnum)
+	{
+	case 0:
+		exec global/ac/mines/proximity_mines_chuck.scr
+
+		local.msg = makearray
+			"By holding USE down you can chuck proximity mines"
+			" You must hold E (USE) down for 3 seconds to chuck a mine"
+		endarray
+	
+	break
+	case 1:
+		exec global/ac/mines/proximity_mines_plant.scr	
+
+		local.msg = makearray
+			"By holding USE down you can plant proximity mines"
+			" You must hold E (USE) down for 3 seconds to  plant proximity mines"
+		endarray
+	break
+	case 2:
+		exec global/ac/mines/sticky_bombs.scr	
+
+		local.msg = makearray
+			"By holding USE down you can chuck sticky bombs"
+			" You must hold E (USE) down for 3 seconds to chuck sticky bombs"
+		endarray
+	break
+	default:
+		exec global/ac/mines/proximity_mines_chuck.scr	
+
+		local.msg = makearray
+			"By holding USE down you can chuck proximity mines"
+			" You must hold E (USE) down for 3 seconds to chuck a mine"
+		endarray
+	}
+
+
+
+	while(1)
+	{
+		waitframe
+		for(local.i=1;local.i<=local.msg.size;local.i++)
+		{
+			wait 300 //five mins
+			waitexec global/ac/messaging/messages_fade.scr local.msg[local.i][1] 3 "fade"
+
+		}
+	}
+
+		
+
+end
